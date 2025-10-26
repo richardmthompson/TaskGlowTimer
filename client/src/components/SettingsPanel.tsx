@@ -21,71 +21,56 @@ export default function SettingsPanel({ colors, onChange, isExpanded, onToggle }
     onChange({ ...colors, [key]: value });
   };
 
-  if (!isExpanded) {
-    return (
+  return (
+    <>
+      {isExpanded && (
+        <div className="fixed bottom-16 right-0 z-40 w-80 max-h-[calc(90vh-4rem)] border-2 border-b-0 border-border rounded-t-xl bg-card shadow-2xl animate-in slide-in-from-bottom duration-300">
+          <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-8rem)]">
+            <ColorPicker
+              label="Sticky Background"
+              value={colors.stickyBackground}
+              onChange={(val) => updateColor("stickyBackground", val)}
+            />
+
+            <ColorPicker
+              label="Completed Items Background"
+              value={colors.completedBackground}
+              onChange={(val) => updateColor("completedBackground", val)}
+            />
+
+            <ColorPicker
+              label="Clock Face Default"
+              value={colors.clockDefault}
+              onChange={(val) => updateColor("clockDefault", val)}
+            />
+
+            <ColorPicker
+              label="Clock Face Elapsed"
+              value={colors.clockElapsed}
+              onChange={(val) => updateColor("clockElapsed", val)}
+            />
+
+            <ColorPicker
+              label="Outline Color"
+              value={colors.outline}
+              onChange={(val) => updateColor("outline", val)}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="fixed bottom-0 right-0 z-50">
         <button
-          data-testid="button-expand-settings"
+          data-testid={isExpanded ? "button-collapse-settings" : "button-expand-settings"}
           onClick={onToggle}
           className="px-6 py-3 border-2 border-border rounded-t-lg bg-card hover-elevate active-elevate-2 flex items-center gap-2 shadow-lg"
         >
           <span className="text-sm font-semibold uppercase tracking-wide">
             Color Settings
           </span>
-          <ChevronUp className="w-4 h-4" />
+          {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
         </button>
       </div>
-    );
-  }
-
-  return (
-    <div className="fixed bottom-0 right-0 z-50 w-80 max-h-[90vh] border-2 border-border rounded-t-xl bg-card shadow-2xl animate-in slide-in-from-bottom duration-300">
-      <div className="p-6 pb-2">
-        <div className="space-y-6 overflow-y-auto max-h-[calc(90vh-8rem)]">
-          <ColorPicker
-            label="Sticky Background"
-            value={colors.stickyBackground}
-            onChange={(val) => updateColor("stickyBackground", val)}
-          />
-
-          <ColorPicker
-            label="Completed Items Background"
-            value={colors.completedBackground}
-            onChange={(val) => updateColor("completedBackground", val)}
-          />
-
-          <ColorPicker
-            label="Clock Face Default"
-            value={colors.clockDefault}
-            onChange={(val) => updateColor("clockDefault", val)}
-          />
-
-          <ColorPicker
-            label="Clock Face Elapsed"
-            value={colors.clockElapsed}
-            onChange={(val) => updateColor("clockElapsed", val)}
-          />
-
-          <ColorPicker
-            label="Outline Color"
-            value={colors.outline}
-            onChange={(val) => updateColor("outline", val)}
-          />
-        </div>
-      </div>
-
-      <div className="sticky bottom-0 bg-card border-t-2 border-border rounded-b-xl">
-        <button
-          data-testid="button-collapse-settings"
-          onClick={onToggle}
-          className="w-full px-6 py-3 hover-elevate active-elevate-2 flex items-center gap-2 rounded-b-xl"
-        >
-          <span className="text-sm font-semibold uppercase tracking-wide">
-            Color Settings
-          </span>
-          <ChevronDown className="w-4 h-4" />
-        </button>
-      </div>
-    </div>
+    </>
   );
 }
