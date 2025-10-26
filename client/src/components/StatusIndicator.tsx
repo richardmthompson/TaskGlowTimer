@@ -17,19 +17,19 @@ export default function StatusIndicator({ isRunning, currentTask }: StatusIndica
     }
   }, [isRunning]);
 
-  if (isRunning) {
-    return (
-      <div data-testid="text-status-working" className="text-left pl-[25%]">
-        <div className="text-foreground font-semibold text-lg">
-          Working on{".".repeat(dotCount)}
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div data-testid="text-status-paused" className="text-left pl-[25%] text-muted-foreground text-sm">
-      paused
+    <div className="text-left pl-[25%]">
+      <div className="inline-block min-w-[140px]">
+        {isRunning ? (
+          <div data-testid="text-status-working" className="text-foreground font-medium text-base">
+            Working on{".".repeat(dotCount)}
+          </div>
+        ) : (
+          <div data-testid="text-status-paused" className="text-muted-foreground text-base">
+            paused
+          </div>
+        )}
+      </div>
     </div>
   );
 }
