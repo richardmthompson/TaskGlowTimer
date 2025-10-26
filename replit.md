@@ -14,6 +14,7 @@ Preferred communication style: Simple, everyday language.
 - `t` - Focus main task sticky note for editing
 - `q` (lowercase) - Focus queue input field for adding tasks to queue
 - `Enter` (from sticky note) - Start the clock
+- `Enter` (when queued task is selected) - Move queued task to sticky note and remove from queue
 - `Space` - Pause and resume clock (toggle)
 - `Cmd+Enter` or `Ctrl+Enter` - Complete current task and add to completed list (works even if timer hasn't started)
 

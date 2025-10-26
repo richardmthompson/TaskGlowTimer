@@ -141,6 +141,11 @@ export default function Timer() {
         queueInputRef.current?.focus();
       }
       
+      else if (e.key === 'Enter' && !isInputFocused && selectedTask?.type === 'queued' && selectedQueuedTaskId) {
+        e.preventDefault();
+        handleQuickStart(selectedQueuedTaskId);
+      }
+      
       else if (e.key === ' ' && !isInputFocused) {
         e.preventDefault();
         handlePlayPause();
@@ -155,8 +160,11 @@ export default function Timer() {
         }
       }
       
-      else if (e.key === 'Q' && !isInputFocused) {
+      else if (e.key === 'Q') {
         e.preventDefault();
+        if (isInputFocused && activeElement) {
+          (activeElement as HTMLElement).blur();
+        }
         if (queuedTasks.length > 0) {
           const firstTask = queuedTasks[0];
           setSelectedQueuedTaskId(firstTask.id);
