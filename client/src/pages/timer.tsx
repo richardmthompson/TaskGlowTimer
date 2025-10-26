@@ -14,7 +14,7 @@ export default function Timer() {
   const [completedTasks, setCompletedTasks] = useState<CompletedTaskData[]>([]);
   const [taskStartTime, setTaskStartTime] = useState<Date | null>(null);
   const [selectedTask, setSelectedTask] = useState<CompletedTaskData | null>(null);
-  const [isSettingsExpanded, setIsSettingsExpanded] = useState(true);
+  const [isSettingsExpanded, setIsSettingsExpanded] = useState(false);
 
   const [colors, setColors] = useState<ColorSettings>({
     stickyBackground: "#fef3c7",
@@ -78,58 +78,56 @@ export default function Timer() {
 
   return (
     <div className="flex h-screen bg-background">
-      <div className="flex-1 flex">
-        <div className={`${isSettingsExpanded ? 'w-1/4' : 'flex-1'} p-8 transition-all duration-300`}>
-          <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground">
-            Completed Today
-          </h2>
-          <CompletedTasksList
-            tasks={completedTasks}
-            backgroundColor={colors.completedBackground}
-            outlineColor={colors.outline}
-            onTaskClick={setSelectedTask}
-          />
-        </div>
+      <div className="w-1/3 p-8 border-r-2 border-border">
+        <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground">
+          Completed Today
+        </h2>
+        <CompletedTasksList
+          tasks={completedTasks}
+          backgroundColor={colors.completedBackground}
+          outlineColor={colors.outline}
+          onTaskClick={setSelectedTask}
+        />
+      </div>
 
-        <div className={`${isSettingsExpanded ? 'flex-1' : 'w-2/3'} flex flex-col items-center justify-center p-8 transition-all duration-300`}>
-          <div className="max-w-2xl w-full space-y-6">
-            <div className="flex items-start gap-8 justify-center">
-              <div className="flex-1 max-w-md">
-                <StickyNote
-                  value={currentTask}
-                  onChange={setCurrentTask}
-                  isActive={isRunning}
-                  backgroundColor={colors.stickyBackground}
-                  outlineColor={colors.outline}
-                />
-                <div className="mt-4">
-                  <StatusIndicator isRunning={isRunning} />
-                </div>
-                <TimerControls
-                  isRunning={isRunning}
-                  onPlayPause={handlePlayPause}
-                  onDone={handleDone}
-                />
+      <div className="flex-1 flex flex-col items-center justify-center p-8">
+        <div className="max-w-2xl w-full space-y-6">
+          <div className="flex items-start gap-8 justify-center">
+            <div className="flex-1 max-w-md">
+              <StickyNote
+                value={currentTask}
+                onChange={setCurrentTask}
+                isActive={isRunning}
+                backgroundColor={colors.stickyBackground}
+                outlineColor={colors.outline}
+              />
+              <div className="mt-4">
+                <StatusIndicator isRunning={isRunning} />
               </div>
-
-              <div>
-                <CircularTimer
-                  elapsedSeconds={elapsedSeconds}
-                  totalSeconds={1800}
-                  defaultColor={colors.clockDefault}
-                  elapsedColor={colors.clockElapsed}
-                  outlineColor={colors.outline}
-                />
-              </div>
+              <TimerControls
+                isRunning={isRunning}
+                onPlayPause={handlePlayPause}
+                onDone={handleDone}
+              />
             </div>
 
-            <TaskDetailsPanel
-              task={selectedTask}
-              onClose={() => setSelectedTask(null)}
-              backgroundColor={colors.completedBackground}
-              outlineColor={colors.outline}
-            />
+            <div>
+              <CircularTimer
+                elapsedSeconds={elapsedSeconds}
+                totalSeconds={1800}
+                defaultColor={colors.clockDefault}
+                elapsedColor={colors.clockElapsed}
+                outlineColor={colors.outline}
+              />
+            </div>
           </div>
+
+          <TaskDetailsPanel
+            task={selectedTask}
+            onClose={() => setSelectedTask(null)}
+            backgroundColor={colors.completedBackground}
+            outlineColor={colors.outline}
+          />
         </div>
       </div>
 

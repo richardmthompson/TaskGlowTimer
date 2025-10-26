@@ -23,24 +23,24 @@ export default function SettingsPanel({ colors, onChange, isExpanded, onToggle }
 
   if (!isExpanded) {
     return (
-      <div className="w-auto">
+      <div className="fixed bottom-0 right-0 z-50">
         <button
           data-testid="button-expand-settings"
           onClick={onToggle}
-          className="h-full px-4 py-6 border-l-2 border-border hover-elevate flex items-start gap-2 bg-card"
+          className="px-6 py-3 border-2 border-border rounded-t-lg bg-card hover-elevate active-elevate-2 flex items-center gap-2 shadow-lg"
         >
-          <span className="text-sm font-semibold uppercase tracking-wide writing-mode-vertical transform rotate-180">
+          <span className="text-sm font-semibold uppercase tracking-wide">
             Color Settings
           </span>
-          <ChevronUp className="w-4 h-4 mt-1" />
+          <ChevronUp className="w-4 h-4" />
         </button>
       </div>
     );
   }
 
   return (
-    <div className="w-72 border-l-2 border-border bg-card">
-      <div className="p-6 sticky top-0 max-h-screen overflow-y-auto">
+    <div className="fixed bottom-0 right-0 z-50 w-80 max-h-[80vh] border-2 border-border rounded-t-xl bg-card shadow-2xl animate-in slide-in-from-bottom duration-300">
+      <div className="p-6 overflow-y-auto max-h-[calc(80vh-4rem)]">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold uppercase tracking-wide">
             Color Settings
@@ -48,7 +48,7 @@ export default function SettingsPanel({ colors, onChange, isExpanded, onToggle }
           <button
             data-testid="button-collapse-settings"
             onClick={onToggle}
-            className="p-1 hover-elevate rounded-md"
+            className="p-1 hover-elevate active-elevate-2 rounded-md"
           >
             <ChevronDown className="w-5 h-5" />
           </button>
