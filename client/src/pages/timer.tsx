@@ -101,9 +101,32 @@ export default function Timer() {
         />
       </div>
 
-      <div className="flex-1 flex items-center p-8">
-        <div className="w-full max-w-3xl">
-          <div className="flex items-start justify-start gap-12 mt-12">
+      <div className="flex-1 flex flex-col">
+        <div className="h-[30%] p-8 pb-4">
+          <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground">
+            Task Queue
+          </h2>
+          <div className="flex gap-4 h-[calc(100%-2rem)]">
+            <div className="w-64 flex-shrink-0">
+              <QueueInput
+                onAddTask={handleAddToQueue}
+                backgroundColor="#dbeafe"
+                outlineColor="#3b82f6"
+              />
+            </div>
+            <div className="flex-1 overflow-y-auto pr-2">
+              <QueuedTasksList
+                tasks={queuedTasks}
+                onReorder={setQueuedTasks}
+                backgroundColor="#dbeafe"
+                outlineColor="#3b82f6"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="h-[70%] p-8 pt-4">
+          <div className="flex items-start gap-12">
             <div className="w-80">
               <div className="mb-4">
                 <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
@@ -138,25 +161,6 @@ export default function Timer() {
             onClose={() => setSelectedTask(null)}
             backgroundColor={colors.completedBackground}
             outlineColor={colors.outline}
-          />
-        </div>
-      </div>
-
-      <div className="w-1/4 p-8 pb-24">
-        <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground">
-          Task Queue
-        </h2>
-        <QueueInput
-          onAddTask={handleAddToQueue}
-          backgroundColor="#dbeafe"
-          outlineColor="#3b82f6"
-        />
-        <div className="mt-4 overflow-y-auto max-h-[calc(100vh-20rem)] pr-2">
-          <QueuedTasksList
-            tasks={queuedTasks}
-            onReorder={setQueuedTasks}
-            backgroundColor="#dbeafe"
-            outlineColor="#3b82f6"
           />
         </div>
       </div>
