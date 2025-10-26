@@ -39,8 +39,8 @@ export default function SettingsPanel({ colors, onChange, isExpanded, onToggle }
   }
 
   return (
-    <div className="fixed bottom-0 right-0 z-50 w-80 max-h-[80vh] border-2 border-border rounded-t-xl bg-card shadow-2xl animate-in slide-in-from-bottom duration-300">
-      <div className="p-6 overflow-y-auto max-h-[calc(80vh-4rem)]">
+    <div className="fixed bottom-0 right-0 z-50 w-80 max-h-[90vh] border-2 border-border rounded-t-xl bg-card shadow-2xl animate-in slide-in-from-bottom duration-300">
+      <div className="p-6 overflow-y-auto max-h-[calc(90vh-4rem)]">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold uppercase tracking-wide">
             Color Settings

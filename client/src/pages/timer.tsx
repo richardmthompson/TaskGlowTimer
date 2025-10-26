@@ -78,7 +78,7 @@ export default function Timer() {
 
   return (
     <div className="flex h-screen bg-background">
-      <div className="w-1/3 p-8 border-r-2 border-border">
+      <div className="w-1/3 p-8">
         <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground">
           Completed Today
         </h2>
@@ -102,7 +102,7 @@ export default function Timer() {
                 outlineColor={colors.outline}
               />
               <div className="mt-4">
-                <StatusIndicator isRunning={isRunning} />
+                <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
               </div>
               <TimerControls
                 isRunning={isRunning}

@@ -22,7 +22,7 @@ export default function CompletedTasksList({
 }: CompletedTasksListProps) {
   if (tasks.length === 0) {
     return (
-      <div className="text-muted-foreground text-sm text-center py-8">
+      <div className="text-muted-foreground text-sm text-left py-8">
         No completed tasks yet
       </div>
     );

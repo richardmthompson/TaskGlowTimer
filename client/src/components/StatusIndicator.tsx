@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 
 interface StatusIndicatorProps {
   isRunning: boolean;
+  currentTask: string;
 }
 
-export default function StatusIndicator({ isRunning }: StatusIndicatorProps) {
+export default function StatusIndicator({ isRunning, currentTask }: StatusIndicatorProps) {
   const [dotCount, setDotCount] = useState(1);
 
   useEffect(() => {
@@ -18,14 +19,16 @@ export default function StatusIndicator({ isRunning }: StatusIndicatorProps) {
 
   if (isRunning) {
     return (
-      <div data-testid="text-status-working" className="text-center text-foreground font-medium">
-        Working{".".repeat(dotCount)}
+      <div data-testid="text-status-working" className="text-left pl-[25%]">
+        <div className="text-foreground font-medium">
+          Working on{".".repeat(dotCount)}
+        </div>
       </div>
     );
   }
 
   return (
-    <div data-testid="text-status-paused" className="text-center text-muted-foreground text-sm">
+    <div data-testid="text-status-paused" className="text-left pl-[25%] text-muted-foreground text-sm">
       paused
     </div>
   );

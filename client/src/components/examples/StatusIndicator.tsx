@@ -7,7 +7,7 @@ export default function StatusIndicatorExample() {
 
   return (
     <div className="p-8 space-y-4">
-      <StatusIndicator isRunning={isRunning} />
+      <StatusIndicator isRunning={isRunning} currentTask="Design homepage" />
       <Button onClick={() => setIsRunning(!isRunning)}>
         Toggle Status
       </Button>
