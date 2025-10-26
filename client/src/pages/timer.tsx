@@ -68,7 +68,7 @@ export default function Timer() {
         endTime: formatTime(endTime),
       };
 
-      setCompletedTasks([newTask, ...completedTasks]);
+      setCompletedTasks([...completedTasks, newTask]);
       setCurrentTask("");
       setElapsedSeconds(0);
       setIsRunning(false);
