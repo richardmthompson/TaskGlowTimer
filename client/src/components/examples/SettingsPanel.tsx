@@ -9,6 +9,7 @@ export default function SettingsPanelExample() {
     clockElapsed: "#3b82f6",
     outline: "#d97706",
   });
+  const [isExpanded, setIsExpanded] = useState(true);
 
   return (
     <div className="flex h-screen">
@@ -21,6 +22,8 @@ export default function SettingsPanelExample() {
           setColors(newColors);
           console.log("Colors updated:", newColors);
         }}
+        isExpanded={isExpanded}
+        onToggle={() => setIsExpanded(!isExpanded)}
       />
     </div>
   );

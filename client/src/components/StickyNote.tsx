@@ -29,6 +29,18 @@ export default function StickyNote({
 
   return (
     <div className="relative">
+      <style>{`
+        @keyframes glow-diffuse {
+          0%, 100% {
+            box-shadow: 0 0 20px ${glowColor}, 0 0 40px ${glowColor}10;
+            transform: scale(1);
+          }
+          50% {
+            box-shadow: 0 0 40px ${glowColor}, 0 0 80px ${glowColor}30, 0 0 120px ${glowColor}10;
+            transform: scale(1.01);
+          }
+        }
+      `}</style>
       <textarea
         data-testid="input-current-task"
         value={value}
@@ -39,9 +51,7 @@ export default function StickyNote({
           backgroundColor,
           borderColor: outlineColor,
           color: "#1f2937",
-          boxShadow: isActive ? `0 0 30px ${glowColor}` : "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          animation: isActive ? "glow-pulse 2s ease-in-out infinite" : "none",
-          ["--glow-color" as string]: glowColor,
+          animation: isActive ? "glow-diffuse 3s ease-in-out infinite" : "none",
         }}
       />
     </div>
