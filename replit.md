@@ -12,13 +12,14 @@ Preferred communication style: Simple, everyday language.
 
 **Task Input & Timer Control:**
 - `t` - Focus main task sticky note for editing
+- `q` (lowercase) - Focus queue input field for adding tasks to queue
 - `Enter` (from sticky note) - Start the clock
 - `Space` - Pause and resume clock (toggle)
-- `Cmd+Enter` - Complete current task and add to completed list
+- `Cmd+Enter` or `Ctrl+Enter` - Complete current task and add to completed list (works even if timer hasn't started)
 
 **Task Navigation:**
-- `c` - Select first completed task
-- `Q` (capital) - Select first queued task
+- `c` - Select first completed task (shows green glow)
+- `Q` (capital) - Select first queued task (shows lighter blue)
 - `Arrow Up/Down` - Navigate through selected task list (completed or queued)
 
 **General:**
@@ -61,7 +62,7 @@ Preferred communication style: Simple, everyday language.
 - **Status Indicator**: Shows "Working on..." with animated dots when active, "paused" when stopped
 - **Completed Tasks**: Left panel (28% width) showing chronological history (newest at bottom) with calendar-style timestamps
 - **Task Queue**: Top-right area (25% height) with input field and draggable task list for planning upcoming work
-- **Task Selection**: Click completed or queued tasks to view details; queued tasks show lighter blue when selected with quick-start Play button
+- **Task Selection**: Click completed or queued tasks to view details; selected completed tasks show green ring glow, queued tasks show lighter blue when selected with quick-start Play button
 - **Color Settings**: Collapsible bottom-right overlay with 5 customizable color pickers (sticky, completed, clock default, clock elapsed, outline)
 - **Drag-and-Drop**: Reorder queued tasks by dragging with grip handle
 - **Keyboard Shortcuts**: Full keyboard navigation for efficient workflow (see below)

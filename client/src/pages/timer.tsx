@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import StickyNote from "@/components/StickyNote";
 import CircularTimer from "@/components/CircularTimer";
 import TimerControls from "@/components/TimerControls";
@@ -34,6 +34,7 @@ export default function Timer() {
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const stickyNoteRef = useRef<HTMLTextAreaElement>(null);
+  const queueInputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (isRunning) {
@@ -54,12 +55,12 @@ export default function Timer() {
     };
   }, [isRunning]);
 
-  const handlePlayPause = () => {
+  const handlePlayPause = useCallback(() => {
     if (!isRunning && !taskStartTime) {
       setTaskStartTime(new Date());
     }
     setIsRunning(!isRunning);
-  };
+  }, [isRunning, taskStartTime]);
 
   const formatTime = (date: Date) => {
     const hours = date.getHours();
@@ -67,7 +68,7 @@ export default function Timer() {
     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
   };
 
-  const handleDone = () => {
+  const handleDone = useCallback(() => {
     if (currentTask.trim()) {
       const endTime = new Date();
       const startTime = taskStartTime || endTime;
@@ -78,13 +79,13 @@ export default function Timer() {
         endTime: formatTime(endTime),
       };
 
-      setCompletedTasks([...completedTasks, newTask]);
+      setCompletedTasks((prev) => [...prev, newTask]);
       setCurrentTask("");
       setElapsedSeconds(0);
       setIsRunning(false);
       setTaskStartTime(null);
     }
-  };
+  }, [currentTask, taskStartTime]);
 
   const handleAddToQueue = (taskTitle: string) => {
     const newTask: QueuedTaskData = {
@@ -133,6 +134,11 @@ export default function Timer() {
       if (e.key === 't' && !isInputFocused) {
         e.preventDefault();
         stickyNoteRef.current?.focus();
+      }
+      
+      else if (e.key === 'q' && !isInputFocused) {
+        e.preventDefault();
+        queueInputRef.current?.focus();
       }
       
       else if (e.key === ' ' && !isInputFocused) {
@@ -197,7 +203,7 @@ export default function Timer() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isRunning, completedTasks, queuedTasks, selectedTask, selectedQueuedTaskId, currentTask, taskStartTime, handleDone, handlePlayPause, setSelectedTask, setSelectedQueuedTaskId, stickyNoteRef]);
+  }, [isRunning, completedTasks, queuedTasks, selectedTask, selectedQueuedTaskId, handleDone, handlePlayPause]);
 
   return (
     <div className="flex h-screen bg-background">
@@ -213,6 +219,7 @@ export default function Timer() {
             setSelectedTask({ ...task, type: 'completed' });
             setSelectedQueuedTaskId(null);
           }}
+          selectedTaskId={selectedTask?.type === 'completed' ? completedTasks.find(t => t.title === selectedTask.title && t.startTime === selectedTask.startTime)?.id : null}
         />
       </div>
 
@@ -225,6 +232,7 @@ export default function Timer() {
             <div className="flex gap-4 h-[calc(100%-2rem)]">
               <div className="w-48 flex-shrink-0">
                 <QueueInput
+                  ref={queueInputRef}
                   onAddTask={handleAddToQueue}
                   backgroundColor="#dbeafe"
                   outlineColor="#3b82f6"

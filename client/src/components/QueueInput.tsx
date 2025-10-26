@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent } from "react";
+import { useState, KeyboardEvent, forwardRef } from "react";
 
 interface QueueInputProps {
   onAddTask: (task: string) => void;
@@ -6,11 +6,11 @@ interface QueueInputProps {
   outlineColor?: string;
 }
 
-export default function QueueInput({
+const QueueInput = forwardRef<HTMLTextAreaElement, QueueInputProps>(({
   onAddTask,
   backgroundColor = "#dbeafe",
   outlineColor = "#3b82f6",
-}: QueueInputProps) {
+}, ref) => {
   const [value, setValue] = useState("");
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -26,6 +26,7 @@ export default function QueueInput({
   return (
     <div className="relative">
       <textarea
+        ref={ref}
         data-testid="input-queue-task"
         value={value}
         onChange={(e) => setValue(e.target.value)}
@@ -40,4 +41,8 @@ export default function QueueInput({
       />
     </div>
   );
-}
+});
+
+QueueInput.displayName = "QueueInput";
+
+export default QueueInput;

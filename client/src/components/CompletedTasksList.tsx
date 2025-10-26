@@ -12,6 +12,7 @@ interface CompletedTasksListProps {
   backgroundColor?: string;
   outlineColor?: string;
   onTaskClick?: (task: CompletedTaskData) => void;
+  selectedTaskId?: string | null;
 }
 
 export default function CompletedTasksList({
@@ -19,6 +20,7 @@ export default function CompletedTasksList({
   backgroundColor = "#d1fae5",
   outlineColor = "#d97706",
   onTaskClick,
+  selectedTaskId,
 }: CompletedTasksListProps) {
   if (tasks.length === 0) {
     return (
@@ -39,6 +41,7 @@ export default function CompletedTasksList({
           backgroundColor={backgroundColor}
           outlineColor={outlineColor}
           onClick={() => onTaskClick?.(task)}
+          isSelected={selectedTaskId === task.id}
         />
       ))}
     </div>
