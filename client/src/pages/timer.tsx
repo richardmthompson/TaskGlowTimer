@@ -162,11 +162,8 @@ export default function Timer() {
         }
       }
       
-      else if (e.key === 'Q') {
+      else if (e.key === 'Q' && !isInputFocused) {
         e.preventDefault();
-        if (isInputFocused && activeElement) {
-          (activeElement as HTMLElement).blur();
-        }
         if (queuedTasks.length > 0) {
           const firstTask = queuedTasks[0];
           setSelectedQueuedTaskId(firstTask.id);
