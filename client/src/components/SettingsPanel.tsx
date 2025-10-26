@@ -40,21 +40,8 @@ export default function SettingsPanel({ colors, onChange, isExpanded, onToggle }
 
   return (
     <div className="fixed bottom-0 right-0 z-50 w-80 max-h-[90vh] border-2 border-border rounded-t-xl bg-card shadow-2xl animate-in slide-in-from-bottom duration-300">
-      <div className="p-6 overflow-y-auto max-h-[calc(90vh-4rem)]">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold uppercase tracking-wide">
-            Color Settings
-          </h2>
-          <button
-            data-testid="button-collapse-settings"
-            onClick={onToggle}
-            className="p-1 hover-elevate active-elevate-2 rounded-md"
-          >
-            <ChevronDown className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="space-y-6">
+      <div className="p-6 pb-2">
+        <div className="space-y-6 overflow-y-auto max-h-[calc(90vh-8rem)]">
           <ColorPicker
             label="Sticky Background"
             value={colors.stickyBackground}
@@ -85,6 +72,19 @@ export default function SettingsPanel({ colors, onChange, isExpanded, onToggle }
             onChange={(val) => updateColor("outline", val)}
           />
         </div>
+      </div>
+
+      <div className="sticky bottom-0 bg-card border-t-2 border-border rounded-b-xl">
+        <button
+          data-testid="button-collapse-settings"
+          onClick={onToggle}
+          className="w-full px-6 py-3 hover-elevate active-elevate-2 flex items-center gap-2 rounded-b-xl"
+        >
+          <span className="text-sm font-semibold uppercase tracking-wide">
+            Color Settings
+          </span>
+          <ChevronDown className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );

@@ -90,10 +90,10 @@ export default function Timer() {
         />
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center p-8">
-        <div className="max-w-2xl w-full space-y-6">
-          <div className="flex items-start gap-8 justify-center">
-            <div className="flex-1 max-w-md">
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="w-full max-w-3xl">
+          <div className="flex items-center justify-center gap-12 mb-6">
+            <div className="w-80">
               <StickyNote
                 value={currentTask}
                 onChange={setCurrentTask}
