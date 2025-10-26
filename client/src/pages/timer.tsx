@@ -33,6 +33,7 @@ export default function Timer() {
   });
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const stickyNoteRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (isRunning) {
@@ -67,12 +68,13 @@ export default function Timer() {
   };
 
   const handleDone = () => {
-    if (currentTask.trim() && taskStartTime) {
+    if (currentTask.trim()) {
       const endTime = new Date();
+      const startTime = taskStartTime || endTime;
       const newTask: CompletedTaskData = {
         id: Date.now().toString(),
         title: currentTask,
-        startTime: formatTime(taskStartTime),
+        startTime: formatTime(startTime),
         endTime: formatTime(endTime),
       };
 
@@ -106,6 +108,96 @@ export default function Timer() {
     setSelectedQueuedTaskId(task.id);
     setSelectedTask(task);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const activeElement = document.activeElement;
+      const isInputFocused = activeElement?.tagName === 'TEXTAREA' || activeElement?.tagName === 'INPUT';
+
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        handleDone();
+        return;
+      }
+      
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        if (activeElement?.tagName === 'TEXTAREA' || activeElement?.tagName === 'INPUT') {
+          (activeElement as HTMLElement).blur();
+        }
+        setSelectedTask(null);
+        setSelectedQueuedTaskId(null);
+        return;
+      }
+
+      if (e.key === 't' && !isInputFocused) {
+        e.preventDefault();
+        stickyNoteRef.current?.focus();
+      }
+      
+      else if (e.key === ' ' && !isInputFocused) {
+        e.preventDefault();
+        handlePlayPause();
+      }
+      
+      else if (e.key === 'c' && !isInputFocused) {
+        e.preventDefault();
+        if (completedTasks.length > 0) {
+          const firstTask = completedTasks[0];
+          setSelectedTask({ ...firstTask, type: 'completed' });
+          setSelectedQueuedTaskId(null);
+        }
+      }
+      
+      else if (e.key === 'Q' && !isInputFocused) {
+        e.preventDefault();
+        if (queuedTasks.length > 0) {
+          const firstTask = queuedTasks[0];
+          setSelectedQueuedTaskId(firstTask.id);
+          setSelectedTask({ type: 'queued', title: firstTask.title, id: firstTask.id });
+        }
+      }
+      
+      else if (e.key === 'ArrowDown' && !isInputFocused) {
+        e.preventDefault();
+        if (selectedTask?.type === 'completed') {
+          const currentIndex = completedTasks.findIndex(t => t.title === selectedTask.title && t.startTime === selectedTask.startTime);
+          if (currentIndex < completedTasks.length - 1) {
+            const nextTask = completedTasks[currentIndex + 1];
+            setSelectedTask({ ...nextTask, type: 'completed' });
+          }
+        } else if (selectedTask?.type === 'queued' && selectedQueuedTaskId) {
+          const currentIndex = queuedTasks.findIndex(t => t.id === selectedQueuedTaskId);
+          if (currentIndex < queuedTasks.length - 1) {
+            const nextTask = queuedTasks[currentIndex + 1];
+            setSelectedQueuedTaskId(nextTask.id);
+            setSelectedTask({ type: 'queued', title: nextTask.title, id: nextTask.id });
+          }
+        }
+      }
+      
+      else if (e.key === 'ArrowUp' && !isInputFocused) {
+        e.preventDefault();
+        if (selectedTask?.type === 'completed') {
+          const currentIndex = completedTasks.findIndex(t => t.title === selectedTask.title && t.startTime === selectedTask.startTime);
+          if (currentIndex > 0) {
+            const prevTask = completedTasks[currentIndex - 1];
+            setSelectedTask({ ...prevTask, type: 'completed' });
+          }
+        } else if (selectedTask?.type === 'queued' && selectedQueuedTaskId) {
+          const currentIndex = queuedTasks.findIndex(t => t.id === selectedQueuedTaskId);
+          if (currentIndex > 0) {
+            const prevTask = queuedTasks[currentIndex - 1];
+            setSelectedQueuedTaskId(prevTask.id);
+            setSelectedTask({ type: 'queued', title: prevTask.title, id: prevTask.id });
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isRunning, completedTasks, queuedTasks, selectedTask, selectedQueuedTaskId, currentTask, taskStartTime, handleDone, handlePlayPause, setSelectedTask, setSelectedQueuedTaskId, stickyNoteRef]);
 
   return (
     <div className="flex h-screen bg-background">
@@ -160,11 +252,13 @@ export default function Timer() {
                 <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
               </div>
               <StickyNote
+                ref={stickyNoteRef}
                 value={currentTask}
                 onChange={setCurrentTask}
                 isActive={isRunning}
                 backgroundColor={colors.stickyBackground}
                 outlineColor={colors.outline}
+                onEnterKey={handlePlayPause}
               />
               <TimerControls
                 isRunning={isRunning}

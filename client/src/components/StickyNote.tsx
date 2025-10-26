@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 
 interface StickyNoteProps {
   value: string;
@@ -6,33 +6,46 @@ interface StickyNoteProps {
   isActive: boolean;
   backgroundColor?: string;
   outlineColor?: string;
+  onEnterKey?: () => void;
 }
 
-export default function StickyNote({
-  value,
-  onChange,
-  isActive,
-  backgroundColor = "#fef3c7",
-  outlineColor = "#d97706",
-}: StickyNoteProps) {
-  const [glowColor, setGlowColor] = useState("");
+const StickyNote = forwardRef<HTMLTextAreaElement, StickyNoteProps>(
+  function StickyNote(
+    {
+      value,
+      onChange,
+      isActive,
+      backgroundColor = "#fef3c7",
+      outlineColor = "#d97706",
+      onEnterKey,
+    },
+    ref
+  ) {
+    const [glowColor, setGlowColor] = useState("");
 
-  useEffect(() => {
-    if (isActive && outlineColor) {
-      const hex = outlineColor.replace("#", "");
-      const r = parseInt(hex.substring(0, 2), 16);
-      const g = parseInt(hex.substring(2, 4), 16);
-      const b = parseInt(hex.substring(4, 6), 16);
-      setGlowColor(`rgba(${r}, ${g}, ${b}, 0.6)`);
-    } else {
-      setGlowColor("");
-    }
-  }, [isActive, outlineColor]);
+    useEffect(() => {
+      if (isActive && outlineColor) {
+        const hex = outlineColor.replace("#", "");
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        setGlowColor(`rgba(${r}, ${g}, ${b}, 0.6)`);
+      } else {
+        setGlowColor("");
+      }
+    }, [isActive, outlineColor]);
 
-  return (
-    <div className="relative">
-      {isActive && glowColor && (
-        <style>{`
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === "Enter" && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        onEnterKey?.();
+      }
+    };
+
+    return (
+      <div className="relative">
+        {isActive && glowColor && (
+          <style>{`
           @keyframes glow-diffuse {
             0%, 100% {
               box-shadow: none;
@@ -44,20 +57,26 @@ export default function StickyNote({
             }
           }
         `}</style>
-      )}
-      <textarea
-        data-testid="input-current-task"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="What are you working on?"
-        className="w-full min-h-32 h-32 p-6 text-lg font-medium rounded-xl border-2 resize-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200"
-        style={{
-          backgroundColor,
-          borderColor: outlineColor,
-          color: "#1f2937",
-          animation: isActive && glowColor ? "glow-diffuse 5s ease-in-out infinite" : "none",
-        }}
-      />
-    </div>
-  );
-}
+        )}
+        <textarea
+          ref={ref}
+          data-testid="input-current-task"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="What are you working on?"
+          className="w-full min-h-32 h-32 p-6 text-lg font-medium rounded-xl border-2 resize-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200"
+          style={{
+            backgroundColor,
+            borderColor: outlineColor,
+            color: "#1f2937",
+            animation:
+              isActive && glowColor ? "glow-diffuse 5s ease-in-out infinite" : "none",
+          }}
+        />
+      </div>
+    );
+  }
+);
+
+export default StickyNote;

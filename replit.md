@@ -8,6 +8,22 @@ A productivity-focused timer application designed to help users track work sessi
 
 Preferred communication style: Simple, everyday language.
 
+## Keyboard Shortcuts
+
+**Task Input & Timer Control:**
+- `t` - Focus main task sticky note for editing
+- `Enter` (from sticky note) - Start the clock
+- `Space` - Pause and resume clock (toggle)
+- `Cmd+Enter` - Complete current task and add to completed list
+
+**Task Navigation:**
+- `c` - Select first completed task
+- `Q` (capital) - Select first queued task
+- `Arrow Up/Down` - Navigate through selected task list (completed or queued)
+
+**General:**
+- `Escape` - Deselect any input field, deselect completed/queued task highlights
+
 ## System Architecture
 
 ### Frontend Architecture
@@ -39,14 +55,16 @@ Preferred communication style: Simple, everyday language.
 - No global state management library (Redux/Zustand) - keeping state local to components
 
 **Key Features**
-- **Sticky Note Input**: Yellow sticky-style textarea for entering current task
+- **Sticky Note Input**: Yellow sticky-style textarea for entering current task with 5-second glow animation
 - **Circular Timer**: 30-minute countdown with animated pie-fill visualization
 - **Play/Pause/Done Controls**: Start, pause, and complete tasks with intuitive buttons
 - **Status Indicator**: Shows "Working on..." with animated dots when active, "paused" when stopped
-- **Completed Tasks**: Left panel showing chronological history (newest at bottom) with calendar-style timestamps
-- **Task Queue**: Right panel with input field and draggable task list for planning upcoming work
+- **Completed Tasks**: Left panel (28% width) showing chronological history (newest at bottom) with calendar-style timestamps
+- **Task Queue**: Top-right area (25% height) with input field and draggable task list for planning upcoming work
+- **Task Selection**: Click completed or queued tasks to view details; queued tasks show lighter blue when selected with quick-start Play button
 - **Color Settings**: Collapsible bottom-right overlay with 5 customizable color pickers (sticky, completed, clock default, clock elapsed, outline)
 - **Drag-and-Drop**: Reorder queued tasks by dragging with grip handle
+- **Keyboard Shortcuts**: Full keyboard navigation for efficient workflow (see below)
 
 ### Backend Architecture
 
