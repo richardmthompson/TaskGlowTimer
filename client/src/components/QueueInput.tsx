@@ -31,7 +31,7 @@ export default function QueueInput({
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Add an item to the queue"
-        className="w-full h-20 p-4 text-sm font-medium rounded-lg border-2 resize-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200"
+        className="w-full h-16 px-3 py-2 text-sm font-medium rounded-lg border-2 resize-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200"
         style={{
           backgroundColor,
           borderColor: outlineColor,

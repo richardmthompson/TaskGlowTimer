@@ -16,7 +16,11 @@ export default function Timer() {
   const [completedTasks, setCompletedTasks] = useState<CompletedTaskData[]>([]);
   const [queuedTasks, setQueuedTasks] = useState<QueuedTaskData[]>([]);
   const [taskStartTime, setTaskStartTime] = useState<Date | null>(null);
-  const [selectedTask, setSelectedTask] = useState<CompletedTaskData | null>(null);
+  const [selectedTask, setSelectedTask] = useState<
+    | { type: 'completed'; title: string; startTime: string; endTime: string }
+    | { type: 'queued'; title: string }
+    | null
+  >(null);
   const [isSettingsExpanded, setIsSettingsExpanded] = useState(false);
 
   const [colors, setColors] = useState<ColorSettings>({
@@ -97,30 +101,33 @@ export default function Timer() {
           tasks={completedTasks}
           backgroundColor={colors.completedBackground}
           outlineColor={colors.outline}
-          onTaskClick={setSelectedTask}
+          onTaskClick={(task) => setSelectedTask({ ...task, type: 'completed' })}
         />
       </div>
 
       <div className="flex-1 flex flex-col">
-        <div className="h-[30%] p-8 pb-4">
-          <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground">
-            Task Queue
-          </h2>
-          <div className="flex gap-4 h-[calc(100%-2rem)]">
-            <div className="w-64 flex-shrink-0">
-              <QueueInput
-                onAddTask={handleAddToQueue}
-                backgroundColor="#dbeafe"
-                outlineColor="#3b82f6"
-              />
-            </div>
-            <div className="flex-1 overflow-y-auto pr-2">
-              <QueuedTasksList
-                tasks={queuedTasks}
-                onReorder={setQueuedTasks}
-                backgroundColor="#dbeafe"
-                outlineColor="#3b82f6"
-              />
+        <div className="h-[30%] p-8 pb-4 flex justify-end">
+          <div className="w-2/3 max-w-2xl">
+            <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground">
+              Task Queue
+            </h2>
+            <div className="flex gap-4 h-[calc(100%-2rem)]">
+              <div className="w-48 flex-shrink-0">
+                <QueueInput
+                  onAddTask={handleAddToQueue}
+                  backgroundColor="#dbeafe"
+                  outlineColor="#3b82f6"
+                />
+              </div>
+              <div className="flex-1 overflow-y-auto pr-2">
+                <QueuedTasksList
+                  tasks={queuedTasks}
+                  onReorder={setQueuedTasks}
+                  backgroundColor="#dbeafe"
+                  outlineColor="#3b82f6"
+                  onTaskClick={setSelectedTask}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -159,7 +166,8 @@ export default function Timer() {
           <TaskDetailsPanel
             task={selectedTask}
             onClose={() => setSelectedTask(null)}
-            backgroundColor={colors.completedBackground}
+            completedBgColor={colors.completedBackground}
+            queuedBgColor="#dbeafe"
             outlineColor={colors.outline}
           />
         </div>

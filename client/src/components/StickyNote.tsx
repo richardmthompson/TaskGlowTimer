@@ -35,7 +35,7 @@ export default function StickyNote({
         <style>{`
           @keyframes glow-diffuse {
             0%, 100% {
-              box-shadow: 0 0 20px ${glowColor}, 0 0 40px ${glowColor};
+              box-shadow: none;
               transform: scale(1);
             }
             50% {
@@ -55,7 +55,7 @@ export default function StickyNote({
           backgroundColor,
           borderColor: outlineColor,
           color: "#1f2937",
-          animation: isActive && glowColor ? "glow-diffuse 3s ease-in-out infinite" : "none",
+          animation: isActive && glowColor ? "glow-diffuse 5s ease-in-out infinite" : "none",
         }}
       />
     </div>

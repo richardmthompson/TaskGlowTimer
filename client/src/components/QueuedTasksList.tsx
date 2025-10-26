@@ -11,6 +11,7 @@ interface QueuedTasksListProps {
   onReorder: (tasks: QueuedTaskData[]) => void;
   backgroundColor?: string;
   outlineColor?: string;
+  onTaskClick?: (task: { type: 'queued'; title: string }) => void;
 }
 
 export default function QueuedTasksList({
@@ -18,6 +19,7 @@ export default function QueuedTasksList({
   onReorder,
   backgroundColor = "#dbeafe",
   outlineColor = "#3b82f6",
+  onTaskClick,
 }: QueuedTasksListProps) {
   const dragItem = useRef<number | null>(null);
   const dragOverItem = useRef<number | null>(null);
@@ -63,6 +65,7 @@ export default function QueuedTasksList({
           onDragStart={handleDragStart}
           onDragEnter={handleDragEnter}
           onDragEnd={handleDragEnd}
+          onClick={() => onTaskClick?.({ type: 'queued', title: task.title })}
         />
       ))}
     </div>
