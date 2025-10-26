@@ -4,6 +4,7 @@ import CircularTimer from "@/components/CircularTimer";
 import TimerControls from "@/components/TimerControls";
 import CompletedTasksList, { CompletedTaskData } from "@/components/CompletedTasksList";
 import SettingsPanel, { ColorSettings } from "@/components/SettingsPanel";
+import HelpPanel from "@/components/HelpPanel";
 import StatusIndicator from "@/components/StatusIndicator";
 import TaskDetailsPanel from "@/components/TaskDetailsPanel";
 import QueueInput from "@/components/QueueInput";
@@ -23,6 +24,7 @@ export default function Timer() {
   >(null);
   const [selectedQueuedTaskId, setSelectedQueuedTaskId] = useState<string | null>(null);
   const [isSettingsExpanded, setIsSettingsExpanded] = useState(false);
+  const [isHelpExpanded, setIsHelpExpanded] = useState(false);
 
   const [colors, setColors] = useState<ColorSettings>({
     stickyBackground: "#fef3c7",
@@ -303,6 +305,11 @@ export default function Timer() {
           />
         </div>
       </div>
+
+      <HelpPanel
+        isExpanded={isHelpExpanded}
+        onToggle={() => setIsHelpExpanded(!isHelpExpanded)}
+      />
 
       <SettingsPanel
         colors={colors}

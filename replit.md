@@ -65,8 +65,9 @@ Preferred communication style: Simple, everyday language.
 - **Task Queue**: Top-right area (25% height) with input field and draggable task list for planning upcoming work
 - **Task Selection**: Click completed or queued tasks to view details; selected completed tasks show green ring glow, queued tasks show lighter blue when selected with quick-start Play button
 - **Color Settings**: Collapsible bottom-right overlay with 5 customizable color pickers (sticky, completed, clock default, clock elapsed, outline)
+- **Help Panel**: Collapsible bottom-left overlay displaying all keyboard shortcuts and their actions
 - **Drag-and-Drop**: Reorder queued tasks by dragging with grip handle
-- **Keyboard Shortcuts**: Full keyboard navigation for efficient workflow (see below)
+- **Keyboard Shortcuts**: Full keyboard navigation for efficient workflow (see Keyboard Shortcuts section or Help panel)
 
 ### Backend Architecture
 
