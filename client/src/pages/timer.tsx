@@ -6,12 +6,15 @@ import CompletedTasksList, { CompletedTaskData } from "@/components/CompletedTas
 import SettingsPanel, { ColorSettings } from "@/components/SettingsPanel";
 import StatusIndicator from "@/components/StatusIndicator";
 import TaskDetailsPanel from "@/components/TaskDetailsPanel";
+import QueueInput from "@/components/QueueInput";
+import QueuedTasksList, { QueuedTaskData } from "@/components/QueuedTasksList";
 
 export default function Timer() {
   const [currentTask, setCurrentTask] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [completedTasks, setCompletedTasks] = useState<CompletedTaskData[]>([]);
+  const [queuedTasks, setQueuedTasks] = useState<QueuedTaskData[]>([]);
   const [taskStartTime, setTaskStartTime] = useState<Date | null>(null);
   const [selectedTask, setSelectedTask] = useState<CompletedTaskData | null>(null);
   const [isSettingsExpanded, setIsSettingsExpanded] = useState(false);
@@ -76,9 +79,17 @@ export default function Timer() {
     }
   };
 
+  const handleAddToQueue = (taskTitle: string) => {
+    const newTask: QueuedTaskData = {
+      id: Date.now().toString(),
+      title: taskTitle,
+    };
+    setQueuedTasks([...queuedTasks, newTask]);
+  };
+
   return (
     <div className="flex h-screen bg-background">
-      <div className="w-1/3 p-8">
+      <div className="w-1/4 p-8">
         <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground">
           Completed Today
         </h2>
@@ -91,9 +102,12 @@ export default function Timer() {
       </div>
 
       <div className="flex-1 flex items-center p-8">
-        <div className="w-full max-w-3xl mx-auto">
-          <div className="flex items-start justify-start gap-12 mb-6">
+        <div className="w-full max-w-3xl">
+          <div className="flex items-start justify-start gap-12 mt-12">
             <div className="w-80">
+              <div className="mb-4">
+                <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
+              </div>
               <StickyNote
                 value={currentTask}
                 onChange={setCurrentTask}
@@ -101,9 +115,6 @@ export default function Timer() {
                 backgroundColor={colors.stickyBackground}
                 outlineColor={colors.outline}
               />
-              <div className="mt-4">
-                <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
-              </div>
               <TimerControls
                 isRunning={isRunning}
                 onPlayPause={handlePlayPause}
@@ -128,6 +139,34 @@ export default function Timer() {
             backgroundColor={colors.completedBackground}
             outlineColor={colors.outline}
           />
+        </div>
+      </div>
+
+      <div className="w-1/4 p-8 pb-24">
+        <div className="flex gap-3">
+          <div className="w-44 flex-shrink-0">
+            <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground">
+              Task Queue
+            </h2>
+            <QueueInput
+              onAddTask={handleAddToQueue}
+              backgroundColor="#dbeafe"
+              outlineColor="#3b82f6"
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground invisible">
+              Queued
+            </h2>
+            <div className="overflow-y-auto max-h-[calc(100vh-12rem)] pr-2">
+              <QueuedTasksList
+                tasks={queuedTasks}
+                onReorder={setQueuedTasks}
+                backgroundColor="#dbeafe"
+                outlineColor="#3b82f6"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
