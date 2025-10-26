@@ -174,7 +174,7 @@ export default function Timer() {
         }
       }
       
-      else if (e.key === 'ArrowDown' && !isInputFocused) {
+      else if ((e.key === 'ArrowDown' || e.key === 'j') && !isInputFocused) {
         e.preventDefault();
         if (selectedTask?.type === 'completed') {
           const currentIndex = completedTasks.findIndex(t => t.title === selectedTask.title && t.startTime === selectedTask.startTime);
@@ -192,7 +192,7 @@ export default function Timer() {
         }
       }
       
-      else if (e.key === 'ArrowUp' && !isInputFocused) {
+      else if ((e.key === 'ArrowUp' || e.key === 'k') && !isInputFocused) {
         e.preventDefault();
         if (selectedTask?.type === 'completed') {
           const currentIndex = completedTasks.findIndex(t => t.title === selectedTask.title && t.startTime === selectedTask.startTime);

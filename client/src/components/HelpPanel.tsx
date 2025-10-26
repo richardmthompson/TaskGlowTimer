@@ -23,7 +23,7 @@ export default function HelpPanel({ isExpanded, onToggle }: HelpPanelProps) {
       items: [
         { key: "c", action: "Select first completed task (shows green glow)" },
         { key: "Q", action: "Select first queued task (shows lighter blue)" },
-        { key: "↑ / ↓", action: "Navigate through selected task list (completed or queued)" },
+        { key: "↑ / ↓ or k / j", action: "Navigate through selected task list (completed or queued)" },
       ],
     },
     {

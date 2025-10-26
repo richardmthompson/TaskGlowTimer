@@ -21,7 +21,7 @@ Preferred communication style: Simple, everyday language.
 **Task Navigation:**
 - `c` - Select first completed task (shows green glow)
 - `Q` (capital) - Select first queued task (shows lighter blue)
-- `Arrow Up/Down` - Navigate through selected task list (completed or queued)
+- `Arrow Up/Down` or `k/j` - Navigate through selected task list (completed or queued)
 
 **General:**
 - `Escape` - Deselect any input field, deselect completed/queued task highlights
