@@ -2,7 +2,7 @@
 
 ## Overview
 
-A productivity-focused timer application designed to help users track work sessions with a clean, minimal interface. The app features a sticky-note style task input, a 30-minute circular timer, completed task history with timeline visualization, and customizable color themes. Built with a focus on clarity and distraction-free workflow, drawing inspiration from Linear and Apple HIG design principles.
+A productivity-focused timer application designed to help users track work sessions with a clean, minimal interface. The app features a sticky-note style task input, a 30-minute circular timer with pie-fill animation, completed task history with chronological display, customizable color themes, and a task queue system with drag-and-drop reordering. Built with a focus on clarity and distraction-free workflow, drawing inspiration from Linear and Apple HIG design principles.
 
 ## User Preferences
 
@@ -25,17 +25,28 @@ Preferred communication style: Simple, everyday language.
 - Class Variance Authority (CVA) for managing component variants
 
 **Design System**
-- Custom color system using CSS variables for theme customization
+- Custom color system using CSS variables for theme customization (5 customizable colors in settings panel)
 - Typography: Inter font family for UI text, JetBrains Mono for monospace timer displays
-- Responsive three-column layout (desktop) collapsing to single column (mobile)
+- Three-column layout: Completed tasks (left 1/4), Main timer (center flex-1), Task Queue (right 1/4)
 - Purposeful animations using Tailwind's animation utilities
 - Spacing primitives based on Tailwind's scale (2, 4, 6, 8, 12, 16 units)
 
 **State Management**
 - Component-level state using React hooks (useState, useEffect, useRef)
 - Timer logic with interval-based updates for elapsed time tracking
-- Local state for color settings, task management, and UI panel visibility
+- Local state for color settings, task management (completed tasks, queued tasks), and UI panel visibility
+- HTML5 drag-and-drop API for queue reordering
 - No global state management library (Redux/Zustand) - keeping state local to components
+
+**Key Features**
+- **Sticky Note Input**: Yellow sticky-style textarea for entering current task
+- **Circular Timer**: 30-minute countdown with animated pie-fill visualization
+- **Play/Pause/Done Controls**: Start, pause, and complete tasks with intuitive buttons
+- **Status Indicator**: Shows "Working on..." with animated dots when active, "paused" when stopped
+- **Completed Tasks**: Left panel showing chronological history (newest at bottom) with calendar-style timestamps
+- **Task Queue**: Right panel with input field and draggable task list for planning upcoming work
+- **Color Settings**: Collapsible bottom-right overlay with 5 customizable color pickers (sticky, completed, clock default, clock elapsed, outline)
+- **Drag-and-Drop**: Reorder queued tasks by dragging with grip handle
 
 ### Backend Architecture
 
