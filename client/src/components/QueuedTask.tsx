@@ -1,4 +1,5 @@
-import { GripVertical } from "lucide-react";
+import { GripVertical, Play } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface QueuedTaskProps {
   id: string;
@@ -6,10 +7,12 @@ interface QueuedTaskProps {
   index: number;
   backgroundColor?: string;
   outlineColor?: string;
+  isSelected?: boolean;
   onDragStart: (index: number) => void;
   onDragEnter: (index: number) => void;
   onDragEnd: () => void;
   onClick?: () => void;
+  onQuickStart?: () => void;
 }
 
 export default function QueuedTask({
@@ -18,11 +21,20 @@ export default function QueuedTask({
   index,
   backgroundColor = "#dbeafe",
   outlineColor = "#3b82f6",
+  isSelected = false,
   onDragStart,
   onDragEnter,
   onDragEnd,
   onClick,
+  onQuickStart,
 }: QueuedTaskProps) {
+  const selectedBgColor = "#bfdbfe";
+
+  const handleQuickStartClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onQuickStart?.();
+  };
+
   return (
     <div
       draggable
@@ -32,7 +44,7 @@ export default function QueuedTask({
       onClick={onClick}
       className="flex items-center gap-2 py-2 px-3 rounded-lg border-2 cursor-move hover-elevate active-elevate-2 transition-all duration-200"
       style={{
-        backgroundColor,
+        backgroundColor: isSelected ? selectedBgColor : backgroundColor,
         borderColor: outlineColor,
       }}
       data-testid={`queued-task-${id}`}
@@ -41,6 +53,17 @@ export default function QueuedTask({
       <div className="text-sm font-medium flex-1" style={{ color: "#1f2937" }}>
         {title}
       </div>
+      {isSelected && (
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={handleQuickStartClick}
+          className="w-7 h-7 flex-shrink-0"
+          data-testid={`button-quick-start-${id}`}
+        >
+          <Play className="w-4 h-4" />
+        </Button>
+      )}
     </div>
   );
 }

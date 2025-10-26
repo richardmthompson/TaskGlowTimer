@@ -18,9 +18,10 @@ export default function Timer() {
   const [taskStartTime, setTaskStartTime] = useState<Date | null>(null);
   const [selectedTask, setSelectedTask] = useState<
     | { type: 'completed'; title: string; startTime: string; endTime: string }
-    | { type: 'queued'; title: string }
+    | { type: 'queued'; title: string; id: string }
     | null
   >(null);
+  const [selectedQueuedTaskId, setSelectedQueuedTaskId] = useState<string | null>(null);
   const [isSettingsExpanded, setIsSettingsExpanded] = useState(false);
 
   const [colors, setColors] = useState<ColorSettings>({
@@ -91,9 +92,24 @@ export default function Timer() {
     setQueuedTasks([...queuedTasks, newTask]);
   };
 
+  const handleQuickStart = (taskId: string) => {
+    const task = queuedTasks.find(t => t.id === taskId);
+    if (task) {
+      setCurrentTask(task.title);
+      setQueuedTasks(queuedTasks.filter(t => t.id !== taskId));
+      setSelectedQueuedTaskId(null);
+      setSelectedTask(null);
+    }
+  };
+
+  const handleQueuedTaskClick = (task: { type: 'queued'; title: string; id: string }) => {
+    setSelectedQueuedTaskId(task.id);
+    setSelectedTask(task);
+  };
+
   return (
     <div className="flex h-screen bg-background">
-      <div className="w-1/4 p-8">
+      <div className="w-[28%] p-8">
         <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground">
           Completed Today
         </h2>
@@ -101,12 +117,15 @@ export default function Timer() {
           tasks={completedTasks}
           backgroundColor={colors.completedBackground}
           outlineColor={colors.outline}
-          onTaskClick={(task) => setSelectedTask({ ...task, type: 'completed' })}
+          onTaskClick={(task) => {
+            setSelectedTask({ ...task, type: 'completed' });
+            setSelectedQueuedTaskId(null);
+          }}
         />
       </div>
 
       <div className="flex-1 flex flex-col">
-        <div className="h-[30%] p-8 pb-4 flex justify-end">
+        <div className="h-[25%] p-8 pb-4 flex justify-end">
           <div className="w-2/3 max-w-2xl">
             <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground">
               Task Queue
@@ -125,15 +144,17 @@ export default function Timer() {
                   onReorder={setQueuedTasks}
                   backgroundColor="#dbeafe"
                   outlineColor="#3b82f6"
-                  onTaskClick={setSelectedTask}
+                  selectedTaskId={selectedQueuedTaskId}
+                  onTaskClick={handleQueuedTaskClick}
+                  onQuickStart={handleQuickStart}
                 />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="h-[70%] p-8 pt-4">
-          <div className="flex items-start gap-12">
+        <div className="h-[75%] p-8 pt-4">
+          <div className="flex items-start gap-6">
             <div className="w-80">
               <div className="mb-4">
                 <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
