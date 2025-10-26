@@ -20,7 +20,7 @@ export default function StatusIndicator({ isRunning, currentTask }: StatusIndica
   if (isRunning) {
     return (
       <div data-testid="text-status-working" className="text-left pl-[25%]">
-        <div className="text-foreground font-medium">
+        <div className="text-foreground font-semibold text-lg">
           Working on{".".repeat(dotCount)}
         </div>
       </div>

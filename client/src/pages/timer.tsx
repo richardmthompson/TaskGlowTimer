@@ -143,30 +143,21 @@ export default function Timer() {
       </div>
 
       <div className="w-1/4 p-8 pb-24">
-        <div className="flex gap-3">
-          <div className="w-44 flex-shrink-0">
-            <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground">
-              Task Queue
-            </h2>
-            <QueueInput
-              onAddTask={handleAddToQueue}
-              backgroundColor="#dbeafe"
-              outlineColor="#3b82f6"
-            />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground invisible">
-              Queued
-            </h2>
-            <div className="overflow-y-auto max-h-[calc(100vh-12rem)] pr-2">
-              <QueuedTasksList
-                tasks={queuedTasks}
-                onReorder={setQueuedTasks}
-                backgroundColor="#dbeafe"
-                outlineColor="#3b82f6"
-              />
-            </div>
-          </div>
+        <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground">
+          Task Queue
+        </h2>
+        <QueueInput
+          onAddTask={handleAddToQueue}
+          backgroundColor="#dbeafe"
+          outlineColor="#3b82f6"
+        />
+        <div className="mt-4 overflow-y-auto max-h-[calc(100vh-20rem)] pr-2">
+          <QueuedTasksList
+            tasks={queuedTasks}
+            onReorder={setQueuedTasks}
+            backgroundColor="#dbeafe"
+            outlineColor="#3b82f6"
+          />
         </div>
       </div>
 

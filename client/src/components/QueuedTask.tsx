@@ -27,7 +27,7 @@ export default function QueuedTask({
       onDragStart={() => onDragStart(index)}
       onDragEnter={() => onDragEnter(index)}
       onDragEnd={onDragEnd}
-      className="flex items-center gap-2 p-3 rounded-lg border-2 cursor-move hover-elevate active-elevate-2 transition-all duration-200"
+      className="flex items-center gap-2 py-2 px-3 rounded-lg border-2 cursor-move hover-elevate active-elevate-2 transition-all duration-200"
       style={{
         backgroundColor,
         borderColor: outlineColor,
