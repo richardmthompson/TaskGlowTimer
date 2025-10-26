@@ -234,7 +234,7 @@ export default function Timer() {
       </div>
 
       <div className="flex-1 flex flex-col">
-        <div className="h-[25%] p-8 pb-4 flex justify-end">
+        <div className="h-[35%] p-8 pb-4 flex justify-end">
           <div className="w-2/3 max-w-2xl">
             <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground">
               Task Queue
@@ -263,7 +263,7 @@ export default function Timer() {
           </div>
         </div>
 
-        <div className="h-[75%] p-8 pt-4">
+        <div className="h-[65%] p-8 pt-4">
           <div className="flex items-start gap-6">
             <div className="w-80">
               <div className="mb-4">
