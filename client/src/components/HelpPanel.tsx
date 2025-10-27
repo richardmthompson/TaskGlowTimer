@@ -12,6 +12,7 @@ export default function HelpPanel({ isExpanded, onToggle }: HelpPanelProps) {
       items: [
         { key: "t", action: "Focus main task sticky note for editing" },
         { key: "q", action: "Focus queue input field for adding tasks to queue" },
+        { key: "g", action: "Focus goal input field for adding goals" },
         { key: "Enter", action: "Start the clock (from sticky note)" },
         { key: "Enter", action: "Move queued task to sticky note (when queued task is selected)" },
         { key: "Space", action: "Pause and resume clock (toggle)" },

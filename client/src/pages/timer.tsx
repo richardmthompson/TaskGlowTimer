@@ -175,6 +175,11 @@ export default function Timer() {
         queueInputRef.current?.focus();
       }
       
+      else if (e.key === 'g' && !isInputFocused) {
+        e.preventDefault();
+        goalInputRef.current?.focus();
+      }
+      
       else if (e.key === 'Enter' && !isInputFocused && selectedTask?.type === 'queued' && selectedQueuedTaskId) {
         e.preventDefault();
         handleQuickStart(selectedQueuedTaskId);
