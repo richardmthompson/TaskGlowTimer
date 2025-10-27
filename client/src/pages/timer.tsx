@@ -220,8 +220,9 @@ export default function Timer() {
   }, [isRunning, completedTasks, queuedTasks, selectedTask, selectedQueuedTaskId, handleDone, handlePlayPause]);
 
   return (
-    <div className="flex h-screen bg-background">
-      <div className="w-[28%] p-8">
+    <div className="flex justify-center h-screen bg-background">
+      <div className="flex max-w-[1600px] w-full px-8">
+        <div className="w-[28%] p-8">
         <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground">
           Completed Today
         </h2>
@@ -322,6 +323,7 @@ export default function Timer() {
         isExpanded={isSettingsExpanded}
         onToggle={() => setIsSettingsExpanded(!isSettingsExpanded)}
       />
+      </div>
     </div>
   );
 }
