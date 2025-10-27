@@ -19,52 +19,52 @@ export default function CircularTimer({
 
   const timeString = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
-  const radius = 85;
+  const radius = 70;
   const circumference = 2 * Math.PI * radius;
   const progress = Math.min(elapsedSeconds / totalSeconds, 1);
   const strokeDashoffset = circumference * (1 - progress);
 
   return (
-    <div className="relative w-48 h-48 flex items-center justify-center">
+    <div className="relative w-40 h-40 flex items-center justify-center">
       <svg
         className="transform -rotate-90"
-        width="192"
-        height="192"
-        viewBox="0 0 192 192"
+        width="160"
+        height="160"
+        viewBox="0 0 160 160"
       >
         <circle
-          cx="96"
-          cy="96"
+          cx="80"
+          cy="80"
           r={radius}
           fill="none"
           stroke={defaultColor}
-          strokeWidth="8"
+          strokeWidth="7"
         />
         <circle
-          cx="96"
-          cy="96"
+          cx="80"
+          cy="80"
           r={radius}
           fill="none"
           stroke={elapsedColor}
-          strokeWidth="8"
+          strokeWidth="7"
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
           className="transition-all duration-1000 ease-linear"
         />
         <circle
-          cx="96"
-          cy="96"
-          r={radius + 4}
+          cx="80"
+          cy="80"
+          r={radius + 3.5}
           fill="none"
           stroke={outlineColor}
-          strokeWidth="4"
+          strokeWidth="3.5"
         />
       </svg>
 
       <div
         data-testid="text-timer-display"
-        className="absolute inset-0 flex items-center justify-center text-4xl font-mono font-bold"
+        className="absolute inset-0 flex items-center justify-center text-2xl font-mono font-bold"
         style={{ color: "#1f2937" }}
       >
         {timeString}

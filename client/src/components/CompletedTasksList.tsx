@@ -31,7 +31,7 @@ export default function CompletedTasksList({
   }
 
   return (
-    <div className="flex flex-col gap-2 overflow-y-auto max-h-[calc(100vh-8rem)] pr-2">
+    <div className="flex flex-col gap-2 overflow-y-auto max-h-[calc(100vh-8rem)] pr-2 max-w-[300px]">
       {tasks.map((task) => (
         <CompletedTask
           key={task.id}

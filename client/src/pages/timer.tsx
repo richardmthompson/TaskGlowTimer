@@ -244,9 +244,9 @@ export default function Timer() {
   }, [isRunning, completedTasks, queuedTasks, selectedTask, selectedQueuedTaskId, handleDone, handlePlayPause]);
 
   return (
-    <div className="flex justify-center h-screen bg-background">
-      <div className="flex max-w-[1600px] w-full">
-        <div className="w-[28%] p-8 flex flex-col items-end">
+    <div className="flex justify-center items-center h-screen bg-background px-8">
+      <div className="flex max-w-[1400px] w-full h-[90vh] border-4 rounded-lg" style={{ backgroundColor: '#faf8f5', borderColor: '#e8e4dc' }}>
+        <div className="w-[28%] p-4 flex flex-col items-end">
         <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground self-stretch">
           Completed Today
         </h2>
@@ -263,12 +263,12 @@ export default function Timer() {
       </div>
 
       <div className="flex-1 flex flex-col">
-        <div className="h-[35%] p-8 pb-4">
-          <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground">
+        <div className="h-[35%] p-8 pb-4 flex flex-col items-end">
+          <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground self-stretch">
             Task Queue
           </h2>
-          <div className="flex gap-4 h-[calc(100%-2rem)]">
-            <div className="w-48 flex-shrink-0">
+          <div className="flex gap-4 h-[calc(100%-2rem)] w-full max-w-[500px]">
+            <div className="w-[200px] flex-shrink-0">
               <QueueInput
                 ref={queueInputRef}
                 onAddTask={handleAddToQueue}
@@ -276,7 +276,7 @@ export default function Timer() {
                 outlineColor="#3b82f6"
               />
             </div>
-            <div className="flex-1 overflow-y-auto pr-2">
+            <div className="flex-1 max-w-[300px] overflow-y-auto pr-2">
               <QueuedTasksList
                 tasks={queuedTasks}
                 onReorder={setQueuedTasks}
