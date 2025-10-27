@@ -14,7 +14,7 @@ Preferred communication style: Simple, everyday language.
 - `t` - Focus main task sticky note for editing
 - `q` (lowercase) - Focus queue input field for adding tasks to queue
 - `Enter` (from sticky note) - Start the clock
-- `Enter` (when queued task is selected) - Move queued task to sticky note and remove from queue
+- `Enter` (when queued task is selected) - Move queued task to sticky note and remove from queue (only if sticky is empty; shows red shake animation if not)
 - `Space` - Pause and resume clock (toggle)
 - `Cmd+Enter` or `Ctrl+Enter` - Complete current task and add to completed list (works even if timer hasn't started)
 
@@ -57,13 +57,14 @@ Preferred communication style: Simple, everyday language.
 - No global state management library (Redux/Zustand) - keeping state local to components
 
 **Key Features**
-- **Sticky Note Input**: Yellow sticky-style textarea for entering current task with 5-second glow animation
+- **Sticky Note Input**: Yellow sticky-style textarea for entering current task with 5-second glow animation; shows red shake animation if attempting to overwrite existing content
 - **Circular Timer**: 30-minute countdown with animated pie-fill visualization
 - **Play/Pause/Done Controls**: Start, pause, and complete tasks with intuitive buttons
 - **Status Indicator**: Shows "Working on..." with animated dots when active, "paused" when stopped
 - **Completed Tasks**: Left panel (28% width) showing chronological history (newest at bottom) with calendar-style timestamps
-- **Task Queue**: Top-right area (25% height) with input field and draggable task list for planning upcoming work
+- **Task Queue**: Top-right area (35% height) with input field and draggable task list for planning upcoming work
 - **Task Selection**: Click completed or queued tasks to view details; selected completed tasks show green ring glow, queued tasks show lighter blue when selected with quick-start Play button
+- **Error Prevention**: Moving queued tasks to non-empty sticky note triggers red shake animation (0.5s) to prevent accidental overwrites
 - **Color Settings**: Collapsible bottom-right overlay with 5 customizable color pickers (sticky, completed, clock default, clock elapsed, outline)
 - **Help Panel**: Collapsible bottom-left overlay displaying all keyboard shortcuts and their actions
 - **Drag-and-Drop**: Reorder queued tasks by dragging with grip handle
