@@ -1,4 +1,5 @@
 interface CompletedTaskProps {
+  id: string;
   title: string;
   startTime: string;
   endTime: string;
@@ -9,6 +10,7 @@ interface CompletedTaskProps {
 }
 
 export default function CompletedTask({
+  id,
   title,
   startTime,
   endTime,
@@ -27,7 +29,7 @@ export default function CompletedTask({
         backgroundColor,
         borderColor: outlineColor,
       }}
-      data-testid={`card-task-${title}`}
+      data-testid={`card-task-${id}`}
     >
       <div className="absolute left-2 top-2 text-xs font-mono" style={{ color: "#1f2937" }}>
         {startTime}

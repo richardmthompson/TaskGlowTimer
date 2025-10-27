@@ -9,6 +9,11 @@ import StatusIndicator from "@/components/StatusIndicator";
 import TaskDetailsPanel from "@/components/TaskDetailsPanel";
 import QueueInput from "@/components/QueueInput";
 import QueuedTasksList, { QueuedTaskData } from "@/components/QueuedTasksList";
+import GoalInput from "@/components/GoalInput";
+import GoalsList from "@/components/GoalsList";
+import GoalTaskConnections from "@/components/GoalTaskConnections";
+import GoalSelector from "@/components/GoalSelector";
+import type { Goal } from "../types/goal";
 
 export default function Timer() {
   const [currentTask, setCurrentTask] = useState("");
@@ -16,6 +21,9 @@ export default function Timer() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [completedTasks, setCompletedTasks] = useState<CompletedTaskData[]>([]);
   const [queuedTasks, setQueuedTasks] = useState<QueuedTaskData[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [currentGoalId, setCurrentGoalId] = useState<string | null>(null);
+  const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
   const [taskStartTime, setTaskStartTime] = useState<Date | null>(null);
   const [selectedTask, setSelectedTask] = useState<
     | { type: 'completed'; title: string; startTime: string; endTime: string }
@@ -38,6 +46,7 @@ export default function Timer() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const stickyNoteRef = useRef<HTMLTextAreaElement>(null);
   const queueInputRef = useRef<HTMLTextAreaElement>(null);
+  const goalInputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (isRunning) {
@@ -80,22 +89,36 @@ export default function Timer() {
         title: currentTask,
         startTime: formatTime(startTime),
         endTime: formatTime(endTime),
+        goalId: currentGoalId,
       };
 
       setCompletedTasks((prev) => [...prev, newTask]);
       setCurrentTask("");
+      setCurrentGoalId(null);
       setElapsedSeconds(0);
       setIsRunning(false);
       setTaskStartTime(null);
     }
-  }, [currentTask, taskStartTime]);
+  }, [currentTask, taskStartTime, currentGoalId]);
 
   const handleAddToQueue = (taskTitle: string) => {
     const newTask: QueuedTaskData = {
       id: Date.now().toString(),
       title: taskTitle,
+      goalId: selectedGoalId,
     };
     setQueuedTasks([...queuedTasks, newTask]);
+  };
+
+  const goalColors = ['#fef3c7', '#dbeafe', '#e0e7ff', '#fce7f3', '#d1fae5', '#fed7aa'];
+  
+  const handleAddGoal = (title: string) => {
+    const newGoal: Goal = {
+      id: Date.now().toString(),
+      title: title,
+      color: goalColors[goals.length % goalColors.length],
+    };
+    setGoals([...goals, newGoal]);
   };
 
   const handleQuickStart = (taskId: string) => {
@@ -108,6 +131,7 @@ export default function Timer() {
         return;
       }
       setCurrentTask(task.title);
+      setCurrentGoalId(task.goalId || null);
       setQueuedTasks(queuedTasks.filter(t => t.id !== taskId));
       setSelectedQueuedTaskId(null);
       setSelectedTask(null);
@@ -246,20 +270,32 @@ export default function Timer() {
   return (
     <div className="flex justify-center items-center h-screen bg-background px-8">
       <div className="flex max-w-[1000px] w-full h-[90vh] border-4 rounded-lg" style={{ backgroundColor: '#faf8f5', borderColor: '#e8e4dc' }}>
-        <div className="w-[28%] p-4 flex flex-col items-end">
+        <div className="w-[28%] p-4 flex flex-col items-end relative">
         <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground text-right w-full">
           Completed Today
         </h2>
-        <CompletedTasksList
-          tasks={completedTasks}
-          backgroundColor={colors.completedBackground}
-          outlineColor={colors.outline}
-          onTaskClick={(task) => {
-            setSelectedTask({ ...task, type: 'completed' });
-            setSelectedQueuedTaskId(null);
-          }}
-          selectedTaskId={selectedTask?.type === 'completed' ? completedTasks.find(t => t.title === selectedTask.title && t.startTime === selectedTask.startTime)?.id : null}
-        />
+        <div className="flex gap-4 w-full relative">
+          <GoalTaskConnections goals={goals} tasks={completedTasks} />
+          <div style={{ zIndex: 1, position: 'relative' }}>
+            <GoalsList
+              goals={goals}
+              onGoalClick={(goal) => setSelectedGoalId(goal.id === selectedGoalId ? null : goal.id)}
+              selectedGoalId={selectedGoalId}
+            />
+          </div>
+          <div style={{ zIndex: 1, position: 'relative' }}>
+            <CompletedTasksList
+              tasks={completedTasks}
+              backgroundColor={colors.completedBackground}
+              outlineColor={colors.outline}
+              onTaskClick={(task) => {
+                setSelectedTask({ ...task, type: 'completed' });
+                setSelectedQueuedTaskId(null);
+              }}
+              selectedTaskId={selectedTask?.type === 'completed' ? completedTasks.find(t => t.title === selectedTask.title && t.startTime === selectedTask.startTime)?.id : null}
+            />
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 flex flex-col">
@@ -267,7 +303,19 @@ export default function Timer() {
           <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground text-right w-full">
             Task Queue
           </h2>
-          <div className="flex gap-4 h-[calc(100%-2rem)] w-full max-w-[500px]">
+          <div className="mb-2 w-full max-w-[500px]">
+            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2 text-right">
+              Assign queued tasks to:
+            </div>
+            <div className="flex justify-end">
+              <GoalSelector
+                goals={goals}
+                selectedGoalId={selectedGoalId}
+                onSelectGoal={setSelectedGoalId}
+              />
+            </div>
+          </div>
+          <div className="flex gap-4 h-[calc(100%-4rem)] w-full max-w-[500px]">
             <div className="w-[200px] flex-shrink-0">
               <QueueInput
                 ref={queueInputRef}
@@ -292,25 +340,48 @@ export default function Timer() {
 
         <div className="h-[65%] p-8 pt-4">
           <div className="flex items-start gap-6">
-            <div className="w-80">
-              <div className="mb-4">
-                <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
+            <div className="flex flex-col gap-4 flex-1">
+              <div className="flex gap-4">
+                <div className="w-48 flex-shrink-0">
+                  <div className="mb-2">
+                    <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Goal</h3>
+                    <GoalInput
+                      ref={goalInputRef}
+                      onAddGoal={handleAddGoal}
+                    />
+                  </div>
+                </div>
+                <div className="w-80">
+                  <div className="mb-4">
+                    <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
+                  </div>
+                  <StickyNote
+                    ref={stickyNoteRef}
+                    value={currentTask}
+                    onChange={setCurrentTask}
+                    isActive={isRunning}
+                    backgroundColor={colors.stickyBackground}
+                    outlineColor={colors.outline}
+                    onEnterKey={handlePlayPause}
+                    showError={showStickyError}
+                  />
+                  <div className="mt-3 mb-3">
+                    <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                      Assign to Goal:
+                    </div>
+                    <GoalSelector
+                      goals={goals}
+                      selectedGoalId={currentGoalId}
+                      onSelectGoal={setCurrentGoalId}
+                    />
+                  </div>
+                  <TimerControls
+                    isRunning={isRunning}
+                    onPlayPause={handlePlayPause}
+                    onDone={handleDone}
+                  />
+                </div>
               </div>
-              <StickyNote
-                ref={stickyNoteRef}
-                value={currentTask}
-                onChange={setCurrentTask}
-                isActive={isRunning}
-                backgroundColor={colors.stickyBackground}
-                outlineColor={colors.outline}
-                onEnterKey={handlePlayPause}
-                showError={showStickyError}
-              />
-              <TimerControls
-                isRunning={isRunning}
-                onPlayPause={handlePlayPause}
-                onDone={handleDone}
-              />
             </div>
 
             <div>

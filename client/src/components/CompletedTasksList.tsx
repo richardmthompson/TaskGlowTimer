@@ -5,6 +5,7 @@ export interface CompletedTaskData {
   title: string;
   startTime: string;
   endTime: string;
+  goalId?: string | null;
 }
 
 interface CompletedTasksListProps {
@@ -35,6 +36,7 @@ export default function CompletedTasksList({
       {tasks.map((task) => (
         <CompletedTask
           key={task.id}
+          id={task.id}
           title={task.title}
           startTime={task.startTime}
           endTime={task.endTime}

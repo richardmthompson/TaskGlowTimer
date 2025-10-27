@@ -1,0 +1,116 @@
+import { useEffect, useState, useRef } from "react";
+import type { Goal } from "../types/goal";
+import type { CompletedTaskData } from "./CompletedTasksList";
+
+interface Connection {
+  goalId: string;
+  taskId: string;
+  goalColor: string;
+}
+
+interface GoalTaskConnectionsProps {
+  goals: Goal[];
+  tasks: CompletedTaskData[];
+}
+
+export default function GoalTaskConnections({ goals, tasks }: GoalTaskConnectionsProps) {
+  const [connections, setConnections] = useState<Connection[]>([]);
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    // Build connection list
+    const newConnections: Connection[] = [];
+    tasks.forEach((task) => {
+      if (task.goalId) {
+        const goal = goals.find((g) => g.id === task.goalId);
+        if (goal) {
+          newConnections.push({
+            goalId: goal.id,
+            taskId: task.id,
+            goalColor: goal.color,
+          });
+        }
+      }
+    });
+    setConnections(newConnections);
+  }, [goals, tasks]);
+
+  const getPaths = () => {
+    if (!svgRef.current) return [];
+
+    const paths: Array<{ d: string; color: string }> = [];
+    
+    connections.forEach((conn) => {
+      const goalEl = document.querySelector(`[data-testid="card-goal-${conn.goalId}"]`);
+      const taskEl = document.querySelector(`[data-testid="card-task-${conn.taskId}"]`);
+      
+      if (goalEl && taskEl) {
+        const goalRect = goalEl.getBoundingClientRect();
+        const taskRect = taskEl.getBoundingClientRect();
+        const svgRect = svgRef.current!.getBoundingClientRect();
+
+        // Start from right edge of goal card
+        const startX = goalRect.right - svgRect.left;
+        const startY = goalRect.top + goalRect.height / 2 - svgRect.top;
+
+        // End at left edge of task card
+        const endX = taskRect.left - svgRect.left;
+        const endY = taskRect.top + taskRect.height / 2 - svgRect.top;
+
+        // Create curved path using bezier curve
+        const midX = (startX + endX) / 2;
+        const path = `M ${startX} ${startY} C ${midX} ${startY}, ${midX} ${endY}, ${endX} ${endY}`;
+
+        paths.push({
+          d: path,
+          color: conn.goalColor,
+        });
+      }
+    });
+
+    return paths;
+  };
+
+  const [paths, setPaths] = useState<Array<{ d: string; color: string }>>([]);
+
+  useEffect(() => {
+    const updatePaths = () => {
+      setPaths(getPaths());
+    };
+
+    // Initial render
+    setTimeout(updatePaths, 100);
+
+    // Update on resize
+    window.addEventListener('resize', updatePaths);
+    
+    // Update periodically to catch DOM changes
+    const interval = setInterval(updatePaths, 500);
+
+    return () => {
+      window.removeEventListener('resize', updatePaths);
+      clearInterval(interval);
+    };
+  }, [connections]);
+
+  if (connections.length === 0) return null;
+
+  return (
+    <svg
+      ref={svgRef}
+      className="absolute inset-0 pointer-events-none"
+      style={{ zIndex: 0 }}
+    >
+      {paths.map((path, index) => (
+        <path
+          key={index}
+          d={path.d}
+          fill="none"
+          stroke={path.color}
+          strokeWidth="2"
+          strokeOpacity="0.4"
+        />
+      ))}
+    </svg>
+  );
+}

@@ -4,6 +4,7 @@ import QueuedTask from "./QueuedTask";
 export interface QueuedTaskData {
   id: string;
   title: string;
+  goalId?: string | null;
 }
 
 interface QueuedTasksListProps {
