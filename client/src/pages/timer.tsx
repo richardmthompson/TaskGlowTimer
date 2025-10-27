@@ -25,6 +25,7 @@ export default function Timer() {
   const [selectedQueuedTaskId, setSelectedQueuedTaskId] = useState<string | null>(null);
   const [isSettingsExpanded, setIsSettingsExpanded] = useState(false);
   const [isHelpExpanded, setIsHelpExpanded] = useState(false);
+  const [showStickyError, setShowStickyError] = useState(false);
 
   const [colors, setColors] = useState<ColorSettings>({
     stickyBackground: "#fef3c7",
@@ -100,6 +101,12 @@ export default function Timer() {
   const handleQuickStart = (taskId: string) => {
     const task = queuedTasks.find(t => t.id === taskId);
     if (task) {
+      if (currentTask.trim()) {
+        // Show error: sticky note already has content
+        setShowStickyError(true);
+        setTimeout(() => setShowStickyError(false), 500);
+        return;
+      }
       setCurrentTask(task.title);
       setQueuedTasks(queuedTasks.filter(t => t.id !== taskId));
       setSelectedQueuedTaskId(null);
@@ -274,6 +281,7 @@ export default function Timer() {
                 backgroundColor={colors.stickyBackground}
                 outlineColor={colors.outline}
                 onEnterKey={handlePlayPause}
+                showError={showStickyError}
               />
               <TimerControls
                 isRunning={isRunning}

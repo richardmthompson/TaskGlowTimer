@@ -7,6 +7,7 @@ interface StickyNoteProps {
   backgroundColor?: string;
   outlineColor?: string;
   onEnterKey?: () => void;
+  showError?: boolean;
 }
 
 const StickyNote = forwardRef<HTMLTextAreaElement, StickyNoteProps>(
@@ -18,6 +19,7 @@ const StickyNote = forwardRef<HTMLTextAreaElement, StickyNoteProps>(
       backgroundColor = "#fef3c7",
       outlineColor = "#d97706",
       onEnterKey,
+      showError = false,
     },
     ref
   ) {
@@ -58,6 +60,21 @@ const StickyNote = forwardRef<HTMLTextAreaElement, StickyNoteProps>(
           }
         `}</style>
         )}
+        {showError && (
+          <style>{`
+          @keyframes shake-error {
+            0%, 100% {
+              transform: translateX(0);
+            }
+            25% {
+              transform: translateX(-10px);
+            }
+            75% {
+              transform: translateX(10px);
+            }
+          }
+        `}</style>
+        )}
         <textarea
           ref={ref}
           data-testid="input-current-task"
@@ -67,11 +84,14 @@ const StickyNote = forwardRef<HTMLTextAreaElement, StickyNoteProps>(
           placeholder="What are you working on?"
           className="w-full min-h-32 h-32 p-6 text-lg font-medium rounded-xl border-2 resize-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200"
           style={{
-            backgroundColor,
-            borderColor: outlineColor,
+            backgroundColor: showError ? "#fee2e2" : backgroundColor,
+            borderColor: showError ? "#ef4444" : outlineColor,
             color: "#1f2937",
-            animation:
-              isActive && glowColor ? "glow-diffuse 5s ease-in-out infinite" : "none",
+            animation: showError 
+              ? "shake-error 0.5s ease-in-out"
+              : isActive && glowColor 
+                ? "glow-diffuse 5s ease-in-out infinite" 
+                : "none",
           }}
         />
       </div>
