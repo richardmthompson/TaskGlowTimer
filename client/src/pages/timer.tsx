@@ -221,7 +221,7 @@ export default function Timer() {
 
   return (
     <div className="flex justify-center h-screen bg-background">
-      <div className="flex max-w-[1600px] w-full px-8">
+      <div className="flex max-w-[1600px] w-full">
         <div className="w-[28%] p-8">
         <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground">
           Completed Today
@@ -239,31 +239,29 @@ export default function Timer() {
       </div>
 
       <div className="flex-1 flex flex-col">
-        <div className="h-[35%] p-8 pb-4 flex justify-end">
-          <div className="w-2/3 max-w-2xl">
-            <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground">
-              Task Queue
-            </h2>
-            <div className="flex gap-4 h-[calc(100%-2rem)]">
-              <div className="w-48 flex-shrink-0">
-                <QueueInput
-                  ref={queueInputRef}
-                  onAddTask={handleAddToQueue}
-                  backgroundColor="#dbeafe"
-                  outlineColor="#3b82f6"
-                />
-              </div>
-              <div className="flex-1 overflow-y-auto pr-2">
-                <QueuedTasksList
-                  tasks={queuedTasks}
-                  onReorder={setQueuedTasks}
-                  backgroundColor="#dbeafe"
-                  outlineColor="#3b82f6"
-                  selectedTaskId={selectedQueuedTaskId}
-                  onTaskClick={handleQueuedTaskClick}
-                  onQuickStart={handleQuickStart}
-                />
-              </div>
+        <div className="h-[35%] p-8 pb-4">
+          <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground">
+            Task Queue
+          </h2>
+          <div className="flex gap-4 h-[calc(100%-2rem)]">
+            <div className="w-48 flex-shrink-0">
+              <QueueInput
+                ref={queueInputRef}
+                onAddTask={handleAddToQueue}
+                backgroundColor="#dbeafe"
+                outlineColor="#3b82f6"
+              />
+            </div>
+            <div className="flex-1 overflow-y-auto pr-2">
+              <QueuedTasksList
+                tasks={queuedTasks}
+                onReorder={setQueuedTasks}
+                backgroundColor="#dbeafe"
+                outlineColor="#3b82f6"
+                selectedTaskId={selectedQueuedTaskId}
+                onTaskClick={handleQueuedTaskClick}
+                onQuickStart={handleQuickStart}
+              />
             </div>
           </div>
         </div>
