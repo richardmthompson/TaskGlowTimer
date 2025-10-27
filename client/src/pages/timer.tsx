@@ -245,9 +245,9 @@ export default function Timer() {
 
   return (
     <div className="flex justify-center items-center h-screen bg-background px-8">
-      <div className="flex max-w-[1400px] w-full h-[90vh] border-4 rounded-lg" style={{ backgroundColor: '#faf8f5', borderColor: '#e8e4dc' }}>
+      <div className="flex max-w-[1000px] w-full h-[90vh] border-4 rounded-lg" style={{ backgroundColor: '#faf8f5', borderColor: '#e8e4dc' }}>
         <div className="w-[28%] p-4 flex flex-col items-end">
-        <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground self-stretch">
+        <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground text-right w-full">
           Completed Today
         </h2>
         <CompletedTasksList
@@ -264,7 +264,7 @@ export default function Timer() {
 
       <div className="flex-1 flex flex-col">
         <div className="h-[35%] p-8 pb-4 flex flex-col items-end">
-          <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground self-stretch">
+          <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground text-right w-full">
             Task Queue
           </h2>
           <div className="flex gap-4 h-[calc(100%-2rem)] w-full max-w-[500px]">
