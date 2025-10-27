@@ -38,6 +38,7 @@ export default function Timer() {
   const [colors, setColors] = useState<ColorSettings>({
     stickyBackground: "#fef3c7",
     completedBackground: "#d1fae5",
+    goalBackground: "#fed7aa",
     clockDefault: "#e5e7eb",
     clockElapsed: "#3b82f6",
     outline: "#d97706",
@@ -305,6 +306,8 @@ export default function Timer() {
             <GoalInput
               ref={goalInputRef}
               onAddGoal={handleAddGoal}
+              backgroundColor={colors.goalBackground}
+              outlineColor={colors.outline}
             />
           </div>
 

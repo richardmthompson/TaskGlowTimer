@@ -4,6 +4,7 @@ import ColorPicker from "./ColorPicker";
 export interface ColorSettings {
   stickyBackground: string;
   completedBackground: string;
+  goalBackground: string;
   clockDefault: string;
   clockElapsed: string;
   outline: string;
@@ -36,6 +37,12 @@ export default function SettingsPanel({ colors, onChange, isExpanded, onToggle }
               label="Completed Items Background"
               value={colors.completedBackground}
               onChange={(val) => updateColor("completedBackground", val)}
+            />
+
+            <ColorPicker
+              label="Goal Input Background"
+              value={colors.goalBackground}
+              onChange={(val) => updateColor("goalBackground", val)}
             />
 
             <ColorPicker
