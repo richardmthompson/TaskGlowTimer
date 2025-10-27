@@ -299,41 +299,51 @@ export default function Timer() {
       </div>
 
       <div className="flex-1 flex flex-col">
-        <div className="h-[35%] p-8 pb-4 flex flex-col items-end">
-          <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground text-right w-full">
-            Task Queue
-          </h2>
-          <div className="mb-2 w-full max-w-[500px]">
-            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2 text-right">
-              Assign queued tasks to:
-            </div>
-            <div className="flex justify-end">
-              <GoalSelector
-                goals={goals}
-                selectedGoalId={selectedGoalId}
-                onSelectGoal={setSelectedGoalId}
-              />
-            </div>
+        <div className="h-[35%] p-8 pb-4 flex justify-between gap-8">
+          <div className="w-48 flex-shrink-0">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Goal</h3>
+            <GoalInput
+              ref={goalInputRef}
+              onAddGoal={handleAddGoal}
+            />
           </div>
-          <div className="flex gap-4 h-[calc(100%-4rem)] w-full max-w-[500px]">
-            <div className="w-[200px] flex-shrink-0">
-              <QueueInput
-                ref={queueInputRef}
-                onAddTask={handleAddToQueue}
-                backgroundColor="#dbeafe"
-                outlineColor="#3b82f6"
-              />
+
+          <div className="flex-1 flex flex-col items-end">
+            <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground text-right w-full">
+              Task Queue
+            </h2>
+            <div className="mb-2 w-full max-w-[500px]">
+              <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2 text-right">
+                Assign queued tasks to:
+              </div>
+              <div className="flex justify-end">
+                <GoalSelector
+                  goals={goals}
+                  selectedGoalId={selectedGoalId}
+                  onSelectGoal={setSelectedGoalId}
+                />
+              </div>
             </div>
-            <div className="flex-1 max-w-[300px] overflow-y-auto pr-2">
-              <QueuedTasksList
-                tasks={queuedTasks}
-                onReorder={setQueuedTasks}
-                backgroundColor="#dbeafe"
-                outlineColor="#3b82f6"
-                selectedTaskId={selectedQueuedTaskId}
-                onTaskClick={handleQueuedTaskClick}
-                onQuickStart={handleQuickStart}
-              />
+            <div className="flex gap-4 h-[calc(100%-4rem)] w-full max-w-[500px]">
+              <div className="w-[200px] flex-shrink-0">
+                <QueueInput
+                  ref={queueInputRef}
+                  onAddTask={handleAddToQueue}
+                  backgroundColor="#dbeafe"
+                  outlineColor="#3b82f6"
+                />
+              </div>
+              <div className="flex-1 max-w-[300px] overflow-y-auto pr-2">
+                <QueuedTasksList
+                  tasks={queuedTasks}
+                  onReorder={setQueuedTasks}
+                  backgroundColor="#dbeafe"
+                  outlineColor="#3b82f6"
+                  selectedTaskId={selectedQueuedTaskId}
+                  onTaskClick={handleQueuedTaskClick}
+                  onQuickStart={handleQuickStart}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -342,15 +352,6 @@ export default function Timer() {
           <div className="flex items-start gap-6">
             <div className="flex flex-col gap-4 flex-1">
               <div className="flex gap-4">
-                <div className="w-48 flex-shrink-0">
-                  <div className="mb-2">
-                    <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Goal</h3>
-                    <GoalInput
-                      ref={goalInputRef}
-                      onAddGoal={handleAddGoal}
-                    />
-                  </div>
-                </div>
                 <div className="w-80">
                   <div className="mb-4">
                     <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
