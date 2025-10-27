@@ -16,6 +16,7 @@ export default function HelpPanel({ isExpanded, onToggle }: HelpPanelProps) {
         { key: "Enter", action: "Move queued task to sticky note (when queued task is selected)" },
         { key: "Space", action: "Pause and resume clock (toggle)" },
         { key: "Cmd+Enter / Ctrl+Enter", action: "Complete current task and add to completed list" },
+        { key: "T", action: "Move completed task back to sticky (only if sticky is empty)" },
       ],
     },
     {
@@ -24,6 +25,12 @@ export default function HelpPanel({ isExpanded, onToggle }: HelpPanelProps) {
         { key: "c", action: "Select first completed task (shows green glow)" },
         { key: "Q", action: "Select first queued task (shows lighter blue)" },
         { key: "↑ / ↓ or k / j", action: "Navigate through selected task list (completed or queued)" },
+      ],
+    },
+    {
+      category: "Task Management",
+      items: [
+        { key: "d", action: "Delete selected task from completed or queued list" },
       ],
     },
     {

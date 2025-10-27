@@ -155,6 +155,30 @@ export default function Timer() {
         handleQuickStart(selectedQueuedTaskId);
       }
       
+      else if (e.key === 'd' && !isInputFocused && selectedTask) {
+        e.preventDefault();
+        if (selectedTask.type === 'completed') {
+          setCompletedTasks(prev => prev.filter(t => !(t.title === selectedTask.title && t.startTime === selectedTask.startTime)));
+          setSelectedTask(null);
+        } else if (selectedTask.type === 'queued' && selectedQueuedTaskId) {
+          setQueuedTasks(prev => prev.filter(t => t.id !== selectedQueuedTaskId));
+          setSelectedQueuedTaskId(null);
+          setSelectedTask(null);
+        }
+      }
+      
+      else if (e.key === 'T' && !isInputFocused && selectedTask?.type === 'completed') {
+        e.preventDefault();
+        if (currentTask.trim()) {
+          setShowStickyError(true);
+          setTimeout(() => setShowStickyError(false), 500);
+          return;
+        }
+        setCurrentTask(selectedTask.title);
+        setCompletedTasks(prev => prev.filter(t => !(t.title === selectedTask.title && t.startTime === selectedTask.startTime)));
+        setSelectedTask(null);
+      }
+      
       else if (e.key === ' ' && !isInputFocused) {
         e.preventDefault();
         handlePlayPause();
@@ -222,8 +246,8 @@ export default function Timer() {
   return (
     <div className="flex justify-center h-screen bg-background">
       <div className="flex max-w-[1600px] w-full">
-        <div className="w-[28%] p-8">
-        <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground">
+        <div className="w-[28%] p-8 flex flex-col items-end">
+        <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground self-stretch">
           Completed Today
         </h2>
         <CompletedTasksList

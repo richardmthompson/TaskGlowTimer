@@ -17,11 +17,15 @@ Preferred communication style: Simple, everyday language.
 - `Enter` (when queued task is selected) - Move queued task to sticky note and remove from queue (only if sticky is empty; shows red shake animation if not)
 - `Space` - Pause and resume clock (toggle)
 - `Cmd+Enter` or `Ctrl+Enter` - Complete current task and add to completed list (works even if timer hasn't started)
+- `T` (capital) - Move completed task back to sticky note (only if sticky is empty; shows red shake animation if not)
 
 **Task Navigation:**
 - `c` - Select first completed task (shows green glow)
 - `Q` (capital) - Select first queued task (shows lighter blue)
 - `Arrow Up/Down` or `k/j` - Navigate through selected task list (completed or queued)
+
+**Task Management:**
+- `d` - Delete selected task from completed or queued list
 
 **General:**
 - `Escape` - Deselect any input field, deselect completed/queued task highlights
