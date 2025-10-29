@@ -393,8 +393,8 @@ export default function Timer() {
         </div>
 
         <div className="h-[65%] pt-4">
-          <div className="flex items-start gap-6">
-            <div className="flex flex-col gap-4 flex-1">
+          <div className="flex items-center gap-6">
+            <div className="flex flex-col gap-4 flex-1 max-w-[400px]">
               <CurrentGoal
                 goal={currentGoal}
                 onClear={() => {
