@@ -392,53 +392,57 @@ export default function Timer() {
           </div>
         </div>
 
-        <div className="h-[65%] pt-4 flex flex-col gap-4">
-          <CurrentGoal
-            goal={currentGoal}
-            onClear={() => {
-              if (currentGoal) {
-                setGoals([...goals, currentGoal]);
-                setCurrentGoal(null);
-              }
-            }}
-          />
-          <div className="mb-4">
-            <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
+        <div className="h-[65%] pt-4">
+          <div className="flex items-start gap-6">
+            <div className="flex flex-col gap-4 flex-1">
+              <CurrentGoal
+                goal={currentGoal}
+                onClear={() => {
+                  if (currentGoal) {
+                    setGoals([...goals, currentGoal]);
+                    setCurrentGoal(null);
+                  }
+                }}
+              />
+              <div className="mb-4">
+                <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
+              </div>
+              <StickyNote
+                ref={stickyNoteRef}
+                value={currentTask}
+                onChange={setCurrentTask}
+                isActive={isRunning}
+                backgroundColor={colors.stickyBackground}
+                outlineColor={colors.outline}
+                onEnterKey={handlePlayPause}
+                showError={showStickyError}
+              />
+              <TimerControls
+                isRunning={isRunning}
+                onPlayPause={handlePlayPause}
+                onDone={handleDone}
+              />
+
+              <TaskDetailsPanel
+                task={selectedTask}
+                onClose={() => setSelectedTask(null)}
+                completedBgColor={colors.completedBackground}
+                queuedBgColor="#dbeafe"
+                outlineColor={colors.outline}
+              />
+            </div>
+
+            <div>
+              <CircularTimer
+                elapsedSeconds={elapsedSeconds}
+                totalSeconds={1800}
+                defaultColor={colors.clockDefault}
+                elapsedColor={colors.clockElapsed}
+                outlineColor={colors.outline}
+              />
+            </div>
           </div>
-          <StickyNote
-            ref={stickyNoteRef}
-            value={currentTask}
-            onChange={setCurrentTask}
-            isActive={isRunning}
-            backgroundColor={colors.stickyBackground}
-            outlineColor={colors.outline}
-            onEnterKey={handlePlayPause}
-            showError={showStickyError}
-          />
-          <TimerControls
-            isRunning={isRunning}
-            onPlayPause={handlePlayPause}
-            onDone={handleDone}
-          />
-
-          <TaskDetailsPanel
-            task={selectedTask}
-            onClose={() => setSelectedTask(null)}
-            completedBgColor={colors.completedBackground}
-            queuedBgColor="#dbeafe"
-            outlineColor={colors.outline}
-          />
         </div>
-      </div>
-
-      <div className="flex items-center justify-center p-8">
-        <CircularTimer
-          elapsedSeconds={elapsedSeconds}
-          totalSeconds={1800}
-          defaultColor={colors.clockDefault}
-          elapsedColor={colors.clockElapsed}
-          outlineColor={colors.outline}
-        />
       </div>
       </div>
     </div>
