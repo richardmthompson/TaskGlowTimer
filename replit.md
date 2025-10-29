@@ -19,16 +19,22 @@ Preferred communication style: Simple, everyday language.
 - `Cmd+Enter` or `Ctrl+Enter` - Complete current task and add to completed list (works even if timer hasn't started)
 - `T` (capital) - Move completed task back to sticky note (only if sticky is empty; shows red shake animation if not)
 
+**Goal Management:**
+- `g` (lowercase) - Focus goal input field for adding new goals to the stack
+- `G` (capital) - Select first goal in the Goals stack
+- `Enter` (when goal is selected) - Promote selected goal to "Current Goal" (displayed above sticky note)
+- `Arrow Up/Down` or `k/j` - Navigate through selected goal list
+
 **Task Navigation:**
 - `c` - Select first completed task (shows green glow)
 - `Q` (capital) - Select first queued task (shows lighter blue)
-- `Arrow Up/Down` or `k/j` - Navigate through selected task list (completed or queued)
+- `Arrow Up/Down` or `k/j` - Navigate through selected task list (completed, queued, or goals)
 
 **Task Management:**
 - `d` - Delete selected task from completed or queued list
 
 **General:**
-- `Escape` - Deselect any input field, deselect completed/queued task highlights
+- `Escape` - Deselect any input field, deselect completed/queued/goal highlights
 
 ## System Architecture
 
@@ -49,7 +55,8 @@ Preferred communication style: Simple, everyday language.
 **Design System**
 - Custom color system using CSS variables for theme customization (5 customizable colors in settings panel)
 - Typography: Inter font family for UI text, JetBrains Mono for monospace timer displays
-- Three-column layout: Completed tasks (left 1/4), Main timer (center flex-1), Task Queue (right 1/4)
+- Fixed 1000px centered layout with pale beige background (#faf8f5)
+- Layout structure: Left panel (28% width split 50/50 vertically: Completed top, Goals bottom), Center area (flex-1: Task Queue top, Sticky + Timer bottom), Right side (Circular Timer)
 - Purposeful animations using Tailwind's animation utilities
 - Spacing primitives based on Tailwind's scale (2, 4, 6, 8, 12, 16 units)
 
@@ -65,10 +72,14 @@ Preferred communication style: Simple, everyday language.
 - **Circular Timer**: 30-minute countdown with animated pie-fill visualization
 - **Play/Pause/Done Controls**: Start, pause, and complete tasks with intuitive buttons
 - **Status Indicator**: Shows "Working on..." with animated dots when active, "paused" when stopped
-- **Completed Tasks**: Left panel (28% width) showing chronological history (newest at bottom) with calendar-style timestamps
-- **Task Queue**: Top-right area (35% height) with input field and draggable task list for planning upcoming work
+- **Completed Tasks**: Top half of left panel showing chronological history (newest at bottom) with calendar-style timestamps
+- **Goals System**: Bottom half of left panel with goal stack; users add goals, promote one to "Current Goal" (displayed above sticky), tasks auto-assign to current goal
+- **Current Goal**: Displays above sticky note when active; clicking ✕ returns goal to stack; SVG connections draw from current goal to assigned tasks
+- **Task Queue**: Top-right area with input field and draggable task list for planning upcoming work
 - **Task Selection**: Click completed or queued tasks to view details; selected completed tasks show green ring glow, queued tasks show lighter blue when selected with quick-start Play button
 - **Error Prevention**: Moving queued tasks to non-empty sticky note triggers red shake animation (0.5s) to prevent accidental overwrites
+- **Goal Promotion**: Select goal via 'G' or click, then press Enter to promote to current; supports both keyboard-only and click+Enter workflows
+- **Auto-Assignment**: Tasks and queue items automatically inherit current goal when created; displayed in completed task cards
 - **Color Settings**: Collapsible bottom-right overlay with 5 customizable color pickers (sticky, completed, clock default, clock elapsed, outline)
 - **Help Panel**: Collapsible bottom-left overlay displaying all keyboard shortcuts and their actions
 - **Drag-and-Drop**: Reorder queued tasks by dragging with grip handle
