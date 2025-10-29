@@ -364,81 +364,62 @@ export default function Timer() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col">
-        <div className="h-[35%] p-8 pb-4 flex flex-col items-end">
-            <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground text-right w-full">
-              Task Queue
-            </h2>
-            <div className="flex gap-4 h-[calc(100%-2rem)] w-full max-w-[500px]">
-              <div className="w-[200px] flex-shrink-0">
-                <QueueInput
-                  ref={queueInputRef}
-                  onAddTask={handleAddToQueue}
-                  backgroundColor="#dbeafe"
-                  outlineColor="#3b82f6"
-                />
-              </div>
-              <div className="flex-1 max-w-[300px] overflow-y-auto pr-2">
-                <QueuedTasksList
-                  tasks={queuedTasks}
-                  onReorder={setQueuedTasks}
-                  backgroundColor="#dbeafe"
-                  outlineColor="#3b82f6"
-                  selectedTaskId={selectedQueuedTaskId}
-                  onTaskClick={handleQueuedTaskClick}
-                  onQuickStart={handleQuickStart}
-                />
-              </div>
+      <div className="flex-1 flex flex-col p-8">
+        <div className="h-[35%] pb-4 flex flex-col items-end">
+          <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground text-right w-full">
+            Task Queue
+          </h2>
+          <div className="flex gap-4 h-[calc(100%-2rem)] w-full max-w-[500px]">
+            <div className="w-[200px] flex-shrink-0">
+              <QueueInput
+                ref={queueInputRef}
+                onAddTask={handleAddToQueue}
+                backgroundColor="#dbeafe"
+                outlineColor="#3b82f6"
+              />
+            </div>
+            <div className="flex-1 max-w-[300px] overflow-y-auto pr-2">
+              <QueuedTasksList
+                tasks={queuedTasks}
+                onReorder={setQueuedTasks}
+                backgroundColor="#dbeafe"
+                outlineColor="#3b82f6"
+                selectedTaskId={selectedQueuedTaskId}
+                onTaskClick={handleQueuedTaskClick}
+                onQuickStart={handleQuickStart}
+              />
             </div>
           </div>
         </div>
 
-        <div className="h-[65%] p-8 pt-4">
-          <div className="flex items-start gap-6">
-            <div className="flex flex-col gap-4 flex-1">
-              <div className="flex gap-4">
-                <div className="w-80">
-                  <CurrentGoal
-                    goal={currentGoal}
-                    onClear={() => {
-                      if (currentGoal) {
-                        setGoals([...goals, currentGoal]);
-                        setCurrentGoal(null);
-                      }
-                    }}
-                  />
-                  <div className="mb-4">
-                    <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
-                  </div>
-                  <StickyNote
-                    ref={stickyNoteRef}
-                    value={currentTask}
-                    onChange={setCurrentTask}
-                    isActive={isRunning}
-                    backgroundColor={colors.stickyBackground}
-                    outlineColor={colors.outline}
-                    onEnterKey={handlePlayPause}
-                    showError={showStickyError}
-                  />
-                  <TimerControls
-                    isRunning={isRunning}
-                    onPlayPause={handlePlayPause}
-                    onDone={handleDone}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <CircularTimer
-                elapsedSeconds={elapsedSeconds}
-                totalSeconds={1800}
-                defaultColor={colors.clockDefault}
-                elapsedColor={colors.clockElapsed}
-                outlineColor={colors.outline}
-              />
-            </div>
+        <div className="h-[65%] pt-4 flex flex-col gap-4">
+          <CurrentGoal
+            goal={currentGoal}
+            onClear={() => {
+              if (currentGoal) {
+                setGoals([...goals, currentGoal]);
+                setCurrentGoal(null);
+              }
+            }}
+          />
+          <div className="mb-4">
+            <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
           </div>
+          <StickyNote
+            ref={stickyNoteRef}
+            value={currentTask}
+            onChange={setCurrentTask}
+            isActive={isRunning}
+            backgroundColor={colors.stickyBackground}
+            outlineColor={colors.outline}
+            onEnterKey={handlePlayPause}
+            showError={showStickyError}
+          />
+          <TimerControls
+            isRunning={isRunning}
+            onPlayPause={handlePlayPause}
+            onDone={handleDone}
+          />
 
           <TaskDetailsPanel
             task={selectedTask}
@@ -448,6 +429,17 @@ export default function Timer() {
             outlineColor={colors.outline}
           />
         </div>
+      </div>
+
+      <div className="flex items-center justify-center p-8">
+        <CircularTimer
+          elapsedSeconds={elapsedSeconds}
+          totalSeconds={1800}
+          defaultColor={colors.clockDefault}
+          elapsedColor={colors.clockElapsed}
+          outlineColor={colors.outline}
+        />
+      </div>
       </div>
     </div>
 
