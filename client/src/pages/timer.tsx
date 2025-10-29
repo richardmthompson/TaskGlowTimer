@@ -369,7 +369,7 @@ export default function Timer() {
           <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground text-right w-full">
             Task Queue
           </h2>
-          <div className="flex gap-4 h-[calc(100%-2rem)] w-full max-w-[500px]">
+          <div className="flex gap-4 h-[calc(100%-2rem)] max-w-[500px] ml-auto">
             <div className="w-[200px] flex-shrink-0">
               <QueueInput
                 ref={queueInputRef}
