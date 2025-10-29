@@ -4,10 +4,11 @@ import GoalCard from "./GoalCard";
 interface GoalsListProps {
   goals: Goal[];
   onGoalClick?: (goal: Goal) => void;
+  onPromote?: (goal: Goal) => void;
   selectedGoalId?: string | null;
 }
 
-export default function GoalsList({ goals, onGoalClick, selectedGoalId }: GoalsListProps) {
+export default function GoalsList({ goals, onGoalClick, onPromote, selectedGoalId }: GoalsListProps) {
   if (goals.length === 0) {
     return (
       <div className="text-muted-foreground text-sm text-left py-8">
@@ -23,6 +24,7 @@ export default function GoalsList({ goals, onGoalClick, selectedGoalId }: GoalsL
           key={goal.id}
           goal={goal}
           onClick={() => onGoalClick?.(goal)}
+          onPromote={() => onPromote?.(goal)}
           isSelected={selectedGoalId === goal.id}
         />
       ))}

@@ -12,7 +12,7 @@ import QueuedTasksList, { QueuedTaskData } from "@/components/QueuedTasksList";
 import GoalInput from "@/components/GoalInput";
 import GoalsList from "@/components/GoalsList";
 import GoalTaskConnections from "@/components/GoalTaskConnections";
-import GoalSelector from "@/components/GoalSelector";
+import CurrentGoal from "@/components/CurrentGoal";
 import type { Goal } from "../types/goal";
 
 export default function Timer() {
@@ -22,8 +22,8 @@ export default function Timer() {
   const [completedTasks, setCompletedTasks] = useState<CompletedTaskData[]>([]);
   const [queuedTasks, setQueuedTasks] = useState<QueuedTaskData[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
-  const [currentGoalId, setCurrentGoalId] = useState<string | null>(null);
-  const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
+  const [currentGoal, setCurrentGoal] = useState<Goal | null>(null);
+  const [selectedGoalInStack, setSelectedGoalInStack] = useState<string | null>(null);
   const [taskStartTime, setTaskStartTime] = useState<Date | null>(null);
   const [selectedTask, setSelectedTask] = useState<
     | { type: 'completed'; title: string; startTime: string; endTime: string }
@@ -90,23 +90,22 @@ export default function Timer() {
         title: currentTask,
         startTime: formatTime(startTime),
         endTime: formatTime(endTime),
-        goalId: currentGoalId,
+        goalId: currentGoal?.id || null,
       };
 
       setCompletedTasks((prev) => [...prev, newTask]);
       setCurrentTask("");
-      setCurrentGoalId(null);
       setElapsedSeconds(0);
       setIsRunning(false);
       setTaskStartTime(null);
     }
-  }, [currentTask, taskStartTime, currentGoalId]);
+  }, [currentTask, taskStartTime, currentGoal]);
 
   const handleAddToQueue = (taskTitle: string) => {
     const newTask: QueuedTaskData = {
       id: Date.now().toString(),
       title: taskTitle,
-      goalId: selectedGoalId,
+      goalId: currentGoal?.id || null,
     };
     setQueuedTasks([...queuedTasks, newTask]);
   };
@@ -132,7 +131,6 @@ export default function Timer() {
         return;
       }
       setCurrentTask(task.title);
-      setCurrentGoalId(task.goalId || null);
       setQueuedTasks(queuedTasks.filter(t => t.id !== taskId));
       setSelectedQueuedTaskId(null);
       setSelectedTask(null);
@@ -162,6 +160,7 @@ export default function Timer() {
         }
         setSelectedTask(null);
         setSelectedQueuedTaskId(null);
+        setSelectedGoalInStack(null);
         return;
       }
 
@@ -232,6 +231,26 @@ export default function Timer() {
         }
       }
       
+      else if (e.key === 'G' && !isInputFocused) {
+        e.preventDefault();
+        if (goals.length > 0) {
+          const firstGoal = goals[0];
+          setSelectedGoalInStack(firstGoal.id);
+          setSelectedTask(null);
+          setSelectedQueuedTaskId(null);
+        }
+      }
+      
+      else if (e.key === 'Enter' && !isInputFocused && selectedGoalInStack && !selectedTask) {
+        e.preventDefault();
+        const goal = goals.find(g => g.id === selectedGoalInStack);
+        if (goal) {
+          setCurrentGoal(goal);
+          setGoals(goals.filter(g => g.id !== selectedGoalInStack));
+          setSelectedGoalInStack(null);
+        }
+      }
+      
       else if ((e.key === 'ArrowDown' || e.key === 'j') && !isInputFocused) {
         e.preventDefault();
         if (selectedTask?.type === 'completed') {
@@ -246,6 +265,12 @@ export default function Timer() {
             const nextTask = queuedTasks[currentIndex + 1];
             setSelectedQueuedTaskId(nextTask.id);
             setSelectedTask({ type: 'queued', title: nextTask.title, id: nextTask.id });
+          }
+        } else if (selectedGoalInStack) {
+          const currentIndex = goals.findIndex(g => g.id === selectedGoalInStack);
+          if (currentIndex < goals.length - 1) {
+            const nextGoal = goals[currentIndex + 1];
+            setSelectedGoalInStack(nextGoal.id);
           }
         }
       }
@@ -265,49 +290,51 @@ export default function Timer() {
             setSelectedQueuedTaskId(prevTask.id);
             setSelectedTask({ type: 'queued', title: prevTask.title, id: prevTask.id });
           }
+        } else if (selectedGoalInStack) {
+          const currentIndex = goals.findIndex(g => g.id === selectedGoalInStack);
+          if (currentIndex > 0) {
+            const prevGoal = goals[currentIndex - 1];
+            setSelectedGoalInStack(prevGoal.id);
+          }
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isRunning, completedTasks, queuedTasks, selectedTask, selectedQueuedTaskId, handleDone, handlePlayPause]);
+  }, [isRunning, completedTasks, queuedTasks, goals, currentGoal, selectedTask, selectedQueuedTaskId, selectedGoalInStack, handleDone, handlePlayPause]);
 
   return (
+    <>
     <div className="flex justify-center items-center h-screen bg-background px-8">
       <div className="flex max-w-[1000px] w-full h-[90vh] border-4 rounded-lg" style={{ backgroundColor: '#faf8f5', borderColor: '#e8e4dc' }}>
-        <div className="w-[28%] p-4 flex flex-col items-end relative">
-        <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground text-right w-full">
-          Completed Today
-        </h2>
-        <div className="flex gap-4 w-full relative">
-          <GoalTaskConnections goals={goals} tasks={completedTasks} />
-          <div style={{ zIndex: 1, position: 'relative' }}>
-            <GoalsList
-              goals={goals}
-              onGoalClick={(goal) => setSelectedGoalId(goal.id === selectedGoalId ? null : goal.id)}
-              selectedGoalId={selectedGoalId}
-            />
-          </div>
-          <div style={{ zIndex: 1, position: 'relative' }}>
-            <CompletedTasksList
-              tasks={completedTasks}
-              backgroundColor={colors.completedBackground}
-              outlineColor={colors.outline}
-              onTaskClick={(task) => {
-                setSelectedTask({ ...task, type: 'completed' });
-                setSelectedQueuedTaskId(null);
-              }}
-              selectedTaskId={selectedTask?.type === 'completed' ? completedTasks.find(t => t.title === selectedTask.title && t.startTime === selectedTask.startTime)?.id : null}
-            />
+        <div className="w-[28%] flex flex-col relative">
+        <div className="h-1/2 p-4 pb-2 flex flex-col items-end border-b-2" style={{ borderColor: '#e8e4dc' }}>
+          <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground text-right w-full">
+            Completed Today
+          </h2>
+          <div className="flex-1 overflow-y-auto w-full relative">
+            <GoalTaskConnections goals={goals} tasks={completedTasks} currentGoal={currentGoal} />
+            <div style={{ zIndex: 1, position: 'relative' }}>
+              <CompletedTasksList
+                tasks={completedTasks}
+                backgroundColor={colors.completedBackground}
+                outlineColor={colors.outline}
+                onTaskClick={(task) => {
+                  setSelectedTask({ ...task, type: 'completed' });
+                  setSelectedQueuedTaskId(null);
+                }}
+                selectedTaskId={selectedTask?.type === 'completed' ? completedTasks.find(t => t.title === selectedTask.title && t.startTime === selectedTask.startTime)?.id : null}
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex-1 flex flex-col">
-        <div className="h-[35%] p-8 pb-4 flex justify-between gap-8">
-          <div className="w-48 flex-shrink-0">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Goal</h3>
+        <div className="h-1/2 p-4 pt-2 flex flex-col">
+          <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground">
+            Goals
+          </h2>
+          <div className="mb-3">
             <GoalInput
               ref={goalInputRef}
               onAddGoal={handleAddGoal}
@@ -315,24 +342,34 @@ export default function Timer() {
               outlineColor={colors.outline}
             />
           </div>
+          <div className="flex-1 overflow-y-auto">
+            <GoalsList
+              goals={goals}
+              onGoalClick={(goal) => {
+                const newSelectedId = goal.id === selectedGoalInStack ? null : goal.id;
+                setSelectedGoalInStack(newSelectedId);
+                if (newSelectedId) {
+                  setSelectedTask(null);
+                  setSelectedQueuedTaskId(null);
+                }
+              }}
+              onPromote={(goal) => {
+                setCurrentGoal(goal);
+                setGoals(goals.filter(g => g.id !== goal.id));
+                setSelectedGoalInStack(null);
+              }}
+              selectedGoalId={selectedGoalInStack}
+            />
+          </div>
+        </div>
+      </div>
 
-          <div className="flex-1 flex flex-col items-end">
+      <div className="flex-1 flex flex-col">
+        <div className="h-[35%] p-8 pb-4 flex flex-col items-end">
             <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground text-right w-full">
               Task Queue
             </h2>
-            <div className="mb-2 w-full max-w-[500px]">
-              <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2 text-right">
-                Assign queued tasks to:
-              </div>
-              <div className="flex justify-end">
-                <GoalSelector
-                  goals={goals}
-                  selectedGoalId={selectedGoalId}
-                  onSelectGoal={setSelectedGoalId}
-                />
-              </div>
-            </div>
-            <div className="flex gap-4 h-[calc(100%-4rem)] w-full max-w-[500px]">
+            <div className="flex gap-4 h-[calc(100%-2rem)] w-full max-w-[500px]">
               <div className="w-[200px] flex-shrink-0">
                 <QueueInput
                   ref={queueInputRef}
@@ -361,6 +398,15 @@ export default function Timer() {
             <div className="flex flex-col gap-4 flex-1">
               <div className="flex gap-4">
                 <div className="w-80">
+                  <CurrentGoal
+                    goal={currentGoal}
+                    onClear={() => {
+                      if (currentGoal) {
+                        setGoals([...goals, currentGoal]);
+                        setCurrentGoal(null);
+                      }
+                    }}
+                  />
                   <div className="mb-4">
                     <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
                   </div>
@@ -374,16 +420,6 @@ export default function Timer() {
                     onEnterKey={handlePlayPause}
                     showError={showStickyError}
                   />
-                  <div className="mt-3 mb-3">
-                    <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                      Assign to Goal:
-                    </div>
-                    <GoalSelector
-                      goals={goals}
-                      selectedGoalId={currentGoalId}
-                      onSelectGoal={setCurrentGoalId}
-                    />
-                  </div>
                   <TimerControls
                     isRunning={isRunning}
                     onPlayPause={handlePlayPause}
@@ -413,19 +449,19 @@ export default function Timer() {
           />
         </div>
       </div>
-
-      <HelpPanel
-        isExpanded={isHelpExpanded}
-        onToggle={() => setIsHelpExpanded(!isHelpExpanded)}
-      />
-
-      <SettingsPanel
-        colors={colors}
-        onChange={setColors}
-        isExpanded={isSettingsExpanded}
-        onToggle={() => setIsSettingsExpanded(!isSettingsExpanded)}
-      />
-      </div>
     </div>
+
+    <HelpPanel
+      isExpanded={isHelpExpanded}
+      onToggle={() => setIsHelpExpanded(!isHelpExpanded)}
+    />
+
+    <SettingsPanel
+      colors={colors}
+      onChange={setColors}
+      isExpanded={isSettingsExpanded}
+      onToggle={() => setIsSettingsExpanded(!isSettingsExpanded)}
+    />
+    </>
   );
 }

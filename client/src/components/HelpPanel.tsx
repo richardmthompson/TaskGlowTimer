@@ -12,20 +12,22 @@ export default function HelpPanel({ isExpanded, onToggle }: HelpPanelProps) {
       items: [
         { key: "t", action: "Focus main task sticky note for editing" },
         { key: "q", action: "Focus queue input field for adding tasks to queue" },
-        { key: "g", action: "Focus goal input field for adding goals" },
+        { key: "g", action: "Focus goal input field for adding goals to stack" },
         { key: "Enter", action: "Start the clock (from sticky note)" },
         { key: "Enter", action: "Move queued task to sticky note (when queued task is selected)" },
+        { key: "Enter", action: "Promote goal from stack to current goal (when goal is selected)" },
         { key: "Space", action: "Pause and resume clock (toggle)" },
         { key: "Cmd+Enter / Ctrl+Enter", action: "Complete current task and add to completed list" },
         { key: "T", action: "Move completed task back to sticky (only if sticky is empty)" },
       ],
     },
     {
-      category: "Task Navigation",
+      category: "Navigation",
       items: [
         { key: "c", action: "Select first completed task (shows green glow)" },
         { key: "Q", action: "Select first queued task (shows lighter blue)" },
-        { key: "↑ / ↓ or k / j", action: "Navigate through selected task list (completed or queued)" },
+        { key: "G", action: "Select first goal in stack (shows orange)" },
+        { key: "↑ / ↓ or k / j", action: "Navigate through selected list (completed, queued, or goals)" },
       ],
     },
     {

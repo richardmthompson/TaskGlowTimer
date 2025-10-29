@@ -15,6 +15,7 @@ const GoalInput = forwardRef<HTMLTextAreaElement, GoalInputProps>(({ onAddGoal, 
       if (value.trim()) {
         onAddGoal(value.trim());
         setValue("");
+        e.currentTarget.blur();
       }
     }
   };

@@ -11,9 +11,10 @@ interface Connection {
 interface GoalTaskConnectionsProps {
   goals: Goal[];
   tasks: CompletedTaskData[];
+  currentGoal: Goal | null;
 }
 
-export default function GoalTaskConnections({ goals, tasks }: GoalTaskConnectionsProps) {
+export default function GoalTaskConnections({ goals, tasks, currentGoal }: GoalTaskConnectionsProps) {
   const [connections, setConnections] = useState<Connection[]>([]);
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -22,7 +23,8 @@ export default function GoalTaskConnections({ goals, tasks }: GoalTaskConnection
     const newConnections: Connection[] = [];
     tasks.forEach((task) => {
       if (task.goalId) {
-        const goal = goals.find((g) => g.id === task.goalId);
+        // Check if the goal is the current goal or in the goals stack
+        const goal = currentGoal?.id === task.goalId ? currentGoal : goals.find((g) => g.id === task.goalId);
         if (goal) {
           newConnections.push({
             goalId: goal.id,
@@ -33,7 +35,7 @@ export default function GoalTaskConnections({ goals, tasks }: GoalTaskConnection
       }
     });
     setConnections(newConnections);
-  }, [goals, tasks]);
+  }, [goals, tasks, currentGoal]);
 
   const getPaths = () => {
     if (!svgRef.current) return [];
@@ -41,7 +43,11 @@ export default function GoalTaskConnections({ goals, tasks }: GoalTaskConnection
     const paths: Array<{ d: string; color: string }> = [];
     
     connections.forEach((conn) => {
-      const goalEl = document.querySelector(`[data-testid="card-goal-${conn.goalId}"]`);
+      // Check if this is the current goal (displayed above sticky) or a goal in the stack
+      let goalEl = document.querySelector(`[data-testid="current-goal-${conn.goalId}"]`);
+      if (!goalEl) {
+        goalEl = document.querySelector(`[data-testid="card-goal-${conn.goalId}"]`);
+      }
       const taskEl = document.querySelector(`[data-testid="card-task-${conn.taskId}"]`);
       
       if (goalEl && taskEl) {
