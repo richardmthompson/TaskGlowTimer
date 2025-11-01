@@ -34,6 +34,7 @@ Preferred communication style: Simple, everyday language.
 - `d` - Delete selected task from completed or queued list
 
 **General:**
+- `Shift+M` - Toggle dark/light theme
 - `Escape` - Deselect any input field, deselect completed/queued/goal highlights
 
 ## System Architecture
@@ -68,9 +69,10 @@ Preferred communication style: Simple, everyday language.
 - No global state management library (Redux/Zustand) - keeping state local to components
 
 **Key Features**
-- **Sticky Note Input**: Yellow sticky-style textarea for entering current task with 5-second glow animation; shows red shake animation if attempting to overwrite existing content
-- **Circular Timer**: 30-minute countdown with animated pie-fill visualization
-- **Play/Pause/Done Controls**: Start, pause, and complete tasks with intuitive buttons
+- **Theme Toggle**: Switch between light and dark modes via button (center top) or Shift+M keyboard shortcut; theme preference saved in localStorage
+- **Sticky Note Input**: Yellow sticky-style textarea (dark: olive-brown) for entering current task with 5-second glow animation; shows red shake animation if attempting to overwrite existing content
+- **Circular Timer**: 30-minute countdown with animated pie-fill visualization; timer and controls positioned together (timer above, play/done buttons below)
+- **Play/Pause/Done Controls**: Blue play/pause and green done buttons positioned directly below circular timer
 - **Status Indicator**: Shows "Working on..." with animated dots when active, "paused" when stopped
 - **Completed Tasks**: Top half of left panel showing chronological history (newest at bottom) with calendar-style timestamps
 - **Goals System**: Bottom half of left panel with goal stack; users add goals, promote one to "Current Goal" (displayed above sticky), tasks auto-assign to current goal
@@ -80,8 +82,9 @@ Preferred communication style: Simple, everyday language.
 - **Error Prevention**: Moving queued tasks to non-empty sticky note triggers red shake animation (0.5s) to prevent accidental overwrites
 - **Goal Promotion**: Select goal via 'G' or click, then press Enter to promote to current; supports both keyboard-only and click+Enter workflows
 - **Auto-Assignment**: Tasks and queue items automatically inherit current goal when created; displayed in completed task cards
-- **Color Settings**: Collapsible bottom-right overlay with 5 customizable color pickers (sticky, completed, clock default, clock elapsed, outline)
+- **Color Settings**: Collapsible bottom-right overlay with 5 customizable color pickers (sticky, completed, clock default, clock elapsed, outline); colors automatically adapt for dark mode
 - **Help Panel**: Collapsible bottom-left overlay displaying all keyboard shortcuts and their actions
+- **Dark Mode Colors**: Researched modern dark mode palette - darker bubbles (completed: dark emerald, goals: dark orange, queue: dark blue-gray, sticky: olive-brown) with subtle lighter borders; clock uses gray-700 background with light blue progress (#60a5fa) and dark gray outline; buttons use blue-500 and emerald-500 for visibility
 - **Drag-and-Drop**: Reorder queued tasks by dragging with grip handle
 - **Keyboard Shortcuts**: Full keyboard navigation for efficient workflow (see Keyboard Shortcuts section or Help panel)
 

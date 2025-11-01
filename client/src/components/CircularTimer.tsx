@@ -64,8 +64,7 @@ export default function CircularTimer({
 
       <div
         data-testid="text-timer-display"
-        className="absolute inset-0 flex items-center justify-center text-2xl font-mono font-bold"
-        style={{ color: "#1f2937" }}
+        className="absolute inset-0 flex items-center justify-center text-2xl font-mono font-bold text-gray-800 dark:text-gray-100"
       >
         {timeString}
       </div>

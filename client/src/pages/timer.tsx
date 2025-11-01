@@ -35,6 +35,7 @@ export default function Timer() {
   const [isSettingsExpanded, setIsSettingsExpanded] = useState(false);
   const [isHelpExpanded, setIsHelpExpanded] = useState(false);
   const [showStickyError, setShowStickyError] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const [colors, setColors] = useState<ColorSettings>({
     stickyBackground: "#fef3c7",
@@ -45,10 +46,34 @@ export default function Timer() {
     outline: "#d97706",
   });
 
+  // Dark mode colors
+  const [darkColors] = useState({
+    stickyBackground: "#3f3f1a",
+    completedBackground: "#1a3f2f",
+    goalBackground: "#3f2f1a",
+    clockDefault: "#374151",
+    clockElapsed: "#60a5fa",
+    outline: "#1f2937",
+  });
+
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const stickyNoteRef = useRef<HTMLTextAreaElement>(null);
   const queueInputRef = useRef<HTMLTextAreaElement>(null);
   const goalInputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Track dark mode changes
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDarkMode(document.documentElement.classList.contains('dark'));
+    };
+    
+    checkDarkMode();
+    
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (isRunning) {
@@ -322,12 +347,12 @@ export default function Timer() {
   return (
     <>
     <div className="flex justify-center items-center h-screen bg-background px-8">
-      <div className="flex max-w-[1000px] w-full h-[90vh] border-4 rounded-lg relative bg-[#faf8f5] dark:bg-[#1a1a1a]" style={{ borderColor: '#e8e4dc' }}>
-        <div className="absolute top-4 right-4 z-10">
+      <div className="flex max-w-[1000px] w-full h-[90vh] border-4 rounded-lg relative bg-[#faf8f5] dark:bg-[#1a1a1a] border-[#e8e4dc] dark:border-[#2a2a2a]">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
           <ThemeToggle />
         </div>
         <div className="w-[28%] flex flex-col relative">
-        <div className="h-1/2 p-4 pb-2 flex flex-col items-end border-b-2" style={{ borderColor: '#e8e4dc' }}>
+        <div className="h-1/2 p-4 pb-2 flex flex-col items-end border-b-2 border-[#e8e4dc] dark:border-[#2a2a2a]">
           <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground text-right w-full">
             Completed Today
           </h2>
@@ -336,8 +361,8 @@ export default function Timer() {
             <div style={{ zIndex: 1, position: 'relative' }}>
               <CompletedTasksList
                 tasks={completedTasks}
-                backgroundColor={colors.completedBackground}
-                outlineColor={colors.outline}
+                backgroundColor={isDarkMode ? darkColors.completedBackground : colors.completedBackground}
+                outlineColor={isDarkMode ? darkColors.outline : colors.outline}
                 onTaskClick={(task) => {
                   setSelectedTask({ ...task, type: 'completed' });
                   setSelectedQueuedTaskId(null);
@@ -356,8 +381,8 @@ export default function Timer() {
             <GoalInput
               ref={goalInputRef}
               onAddGoal={handleAddGoal}
-              backgroundColor={colors.goalBackground}
-              outlineColor={colors.outline}
+              backgroundColor={isDarkMode ? darkColors.goalBackground : colors.goalBackground}
+              outlineColor={isDarkMode ? darkColors.outline : colors.outline}
             />
           </div>
           <div className="flex-1 overflow-y-auto">
@@ -392,16 +417,16 @@ export default function Timer() {
               <QueueInput
                 ref={queueInputRef}
                 onAddTask={handleAddToQueue}
-                backgroundColor="#dbeafe"
-                outlineColor="#3b82f6"
+                backgroundColor={isDarkMode ? "#1a3f4f" : "#dbeafe"}
+                outlineColor={isDarkMode ? "#2a4f5f" : "#3b82f6"}
               />
             </div>
             <div className="flex-1 max-w-[300px] overflow-y-auto pr-2">
               <QueuedTasksList
                 tasks={queuedTasks}
                 onReorder={setQueuedTasks}
-                backgroundColor="#dbeafe"
-                outlineColor="#3b82f6"
+                backgroundColor={isDarkMode ? "#1a3f4f" : "#dbeafe"}
+                outlineColor={isDarkMode ? "#2a4f5f" : "#3b82f6"}
                 selectedTaskId={selectedQueuedTaskId}
                 onTaskClick={handleQueuedTaskClick}
                 onQuickStart={handleQuickStart}
@@ -411,7 +436,7 @@ export default function Timer() {
         </div>
 
         <div className="h-[65%] pt-4">
-          <div className="flex items-center gap-6">
+          <div className="flex items-start gap-8">
             <div className="flex flex-col gap-4 flex-1 max-w-[400px]">
               <CurrentGoal
                 goal={currentGoal}
@@ -430,33 +455,33 @@ export default function Timer() {
                 value={currentTask}
                 onChange={setCurrentTask}
                 isActive={isRunning}
-                backgroundColor={colors.stickyBackground}
-                outlineColor={colors.outline}
+                backgroundColor={isDarkMode ? darkColors.stickyBackground : colors.stickyBackground}
+                outlineColor={isDarkMode ? darkColors.outline : colors.outline}
                 onEnterKey={handlePlayPause}
                 showError={showStickyError}
-              />
-              <TimerControls
-                isRunning={isRunning}
-                onPlayPause={handlePlayPause}
-                onDone={handleDone}
               />
 
               <TaskDetailsPanel
                 task={selectedTask}
                 onClose={() => setSelectedTask(null)}
-                completedBgColor={colors.completedBackground}
-                queuedBgColor="#dbeafe"
-                outlineColor={colors.outline}
+                completedBgColor={isDarkMode ? darkColors.completedBackground : colors.completedBackground}
+                queuedBgColor={isDarkMode ? "#1a3f4f" : "#dbeafe"}
+                outlineColor={isDarkMode ? darkColors.outline : colors.outline}
               />
             </div>
 
-            <div>
+            <div className="flex flex-col items-center gap-4">
               <CircularTimer
                 elapsedSeconds={elapsedSeconds}
                 totalSeconds={1800}
-                defaultColor={colors.clockDefault}
-                elapsedColor={colors.clockElapsed}
-                outlineColor={colors.outline}
+                defaultColor={isDarkMode ? darkColors.clockDefault : colors.clockDefault}
+                elapsedColor={isDarkMode ? darkColors.clockElapsed : colors.clockElapsed}
+                outlineColor={isDarkMode ? darkColors.outline : colors.outline}
+              />
+              <TimerControls
+                isRunning={isRunning}
+                onPlayPause={handlePlayPause}
+                onDone={handleDone}
               />
             </div>
           </div>
