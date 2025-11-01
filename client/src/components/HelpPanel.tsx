@@ -39,6 +39,7 @@ export default function HelpPanel({ isExpanded, onToggle }: HelpPanelProps) {
     {
       category: "General",
       items: [
+        { key: "Shift+M", action: "Toggle dark/light theme" },
         { key: "Escape", action: "Deselect any input field, deselect completed/queued task highlights" },
       ],
     },

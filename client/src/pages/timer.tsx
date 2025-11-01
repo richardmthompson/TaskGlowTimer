@@ -13,6 +13,7 @@ import GoalInput from "@/components/GoalInput";
 import GoalsList from "@/components/GoalsList";
 import GoalTaskConnections from "@/components/GoalTaskConnections";
 import CurrentGoal from "@/components/CurrentGoal";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Goal } from "../types/goal";
 
 export default function Timer() {
@@ -150,6 +151,20 @@ export default function Timer() {
       if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         handleDone();
+        return;
+      }
+      
+      if (e.key === 'M' && e.shiftKey && !isInputFocused) {
+        e.preventDefault();
+        const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+        
+        if (newTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
         return;
       }
       
@@ -307,7 +322,10 @@ export default function Timer() {
   return (
     <>
     <div className="flex justify-center items-center h-screen bg-background px-8">
-      <div className="flex max-w-[1000px] w-full h-[90vh] border-4 rounded-lg" style={{ backgroundColor: '#faf8f5', borderColor: '#e8e4dc' }}>
+      <div className="flex max-w-[1000px] w-full h-[90vh] border-4 rounded-lg relative bg-[#faf8f5] dark:bg-[#1a1a1a]" style={{ borderColor: '#e8e4dc' }}>
+        <div className="absolute top-4 right-4 z-10">
+          <ThemeToggle />
+        </div>
         <div className="w-[28%] flex flex-col relative">
         <div className="h-1/2 p-4 pb-2 flex flex-col items-end border-b-2" style={{ borderColor: '#e8e4dc' }}>
           <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground text-right w-full">
