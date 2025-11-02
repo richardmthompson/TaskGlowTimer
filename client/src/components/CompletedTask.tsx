@@ -31,11 +31,11 @@ export default function CompletedTask({
       }}
       data-testid={`card-task-${id}`}
     >
-      <div className="absolute left-2 top-2 text-xs font-mono" style={{ color: "#1f2937" }}>
+      <div className="absolute left-2 top-2 text-xs font-mono text-gray-800 dark:text-gray-300">
         {startTime}
       </div>
       
-      <div className="absolute left-2 bottom-2 text-xs font-mono" style={{ color: "#1f2937" }}>
+      <div className="absolute left-2 bottom-2 text-xs font-mono text-gray-800 dark:text-gray-300">
         {endTime}
       </div>
 
@@ -44,7 +44,7 @@ export default function CompletedTask({
         style={{ backgroundColor: outlineColor }}
       />
 
-      <div className="text-sm font-medium truncate" style={{ color: "#1f2937" }}>
+      <div className="text-sm font-bold truncate text-gray-800 dark:text-gray-300">
         {title}
       </div>
     </button>

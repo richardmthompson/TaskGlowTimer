@@ -50,7 +50,7 @@ export default function QueuedTask({
       data-testid={`queued-task-${id}`}
     >
       <GripVertical className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-      <div className="text-sm font-medium flex-1" style={{ color: "#1f2937" }}>
+      <div className="text-sm font-bold flex-1 text-gray-800 dark:text-gray-300">
         {title}
       </div>
       {isSelected && (

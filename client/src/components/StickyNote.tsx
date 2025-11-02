@@ -82,11 +82,10 @@ const StickyNote = forwardRef<HTMLTextAreaElement, StickyNoteProps>(
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="What are you working on?"
-          className="w-full min-h-32 h-32 p-6 text-lg font-medium rounded-xl border-2 resize-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200"
+          className="w-full min-h-32 h-32 p-6 text-lg font-bold rounded-xl border-2 resize-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 text-gray-800 dark:text-gray-300"
           style={{
             backgroundColor: showError ? "#fee2e2" : backgroundColor,
             borderColor: showError ? "#ef4444" : outlineColor,
-            color: "#1f2937",
             animation: showError 
               ? "shake-error 0.5s ease-in-out"
               : isActive && glowColor 

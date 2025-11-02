@@ -28,7 +28,7 @@ export default function GoalCard({ goal, onClick, onPromote, isSelected = false 
       }}
       data-testid={`card-goal-${goal.id}`}
     >
-      <div className="text-sm font-semibold truncate" style={{ color: "#1f2937" }}>
+      <div className="text-sm font-bold truncate text-gray-800 dark:text-gray-300">
         {goal.title}
       </div>
     </button>
