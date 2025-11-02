@@ -15,6 +15,7 @@ import GoalTaskConnections from "@/components/GoalTaskConnections";
 import CurrentGoal from "@/components/CurrentGoal";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Goal } from "../types/goal";
+import type { Reward, RewardSummary } from "../types/reward";
 
 export default function Timer() {
   const [currentTask, setCurrentTask] = useState("");
@@ -36,6 +37,8 @@ export default function Timer() {
   const [isHelpExpanded, setIsHelpExpanded] = useState(false);
   const [showStickyError, setShowStickyError] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [rewardStack, setRewardStack] = useState<Reward[]>([]);
+  const [lastRewardAt, setLastRewardAt] = useState<number>(0);
 
   const [colors, setColors] = useState<ColorSettings>({
     stickyBackground: "#fef3c7",
@@ -75,10 +78,58 @@ export default function Timer() {
     return () => observer.disconnect();
   }, []);
 
+  // Medal/Diamond conversion logic
+  const consolidateRewards = useCallback((rewards: Reward[]): Reward[] => {
+    const newStack = [...rewards];
+    
+    // Check if top two items are medals (30 minutes each)
+    while (newStack.length >= 2) {
+      const top = newStack[0];
+      const second = newStack[1];
+      
+      if (top.type === 'medal' && top.minutes === 30 && 
+          second.type === 'medal' && second.minutes === 30) {
+        // Combine two medals into a diamond
+        const diamond: Reward = {
+          id: Date.now().toString(),
+          type: 'diamond',
+          minutes: 60,
+          createdAt: new Date(),
+        };
+        newStack.splice(0, 2, diamond);
+      } else {
+        break;
+      }
+    }
+    
+    return newStack;
+  }, []);
+
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
-        setElapsedSeconds((prev) => prev + 1);
+        setElapsedSeconds((prev) => {
+          const newSeconds = prev + 1;
+          
+          // Check if we've completed a 30-minute cycle
+          if (newSeconds > 0 && newSeconds % 1800 === 0 && newSeconds !== lastRewardAt) {
+            // Award a medal
+            const medal: Reward = {
+              id: Date.now().toString(),
+              type: 'medal',
+              minutes: 30,
+              createdAt: new Date(),
+            };
+            
+            setLastRewardAt(newSeconds);
+            setRewardStack((prev) => {
+              const newStack = [medal, ...prev];
+              return consolidateRewards(newStack);
+            });
+          }
+          
+          return newSeconds;
+        });
       }, 1000);
     } else {
       if (intervalRef.current) {
@@ -92,7 +143,7 @@ export default function Timer() {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRunning]);
+  }, [isRunning, lastRewardAt, consolidateRewards]);
 
   const handlePlayPause = useCallback(() => {
     if (!isRunning && !taskStartTime) {
@@ -111,12 +162,21 @@ export default function Timer() {
     if (currentTask.trim()) {
       const endTime = new Date();
       const startTime = taskStartTime || endTime;
+      
+      // Calculate reward summary
+      const rewardSummary: RewardSummary = {
+        medals: rewardStack.filter(r => r.type === 'medal').length,
+        diamonds: rewardStack.filter(r => r.type === 'diamond').length,
+        totalMinutes: rewardStack.reduce((sum, r) => sum + r.minutes, 0),
+      };
+      
       const newTask: CompletedTaskData = {
         id: Date.now().toString(),
         title: currentTask,
         startTime: formatTime(startTime),
         endTime: formatTime(endTime),
         goalId: currentGoal?.id || null,
+        rewards: rewardSummary.totalMinutes > 0 ? rewardSummary : undefined,
       };
 
       setCompletedTasks((prev) => [...prev, newTask]);
@@ -124,8 +184,10 @@ export default function Timer() {
       setElapsedSeconds(0);
       setIsRunning(false);
       setTaskStartTime(null);
+      setRewardStack([]);
+      setLastRewardAt(0);
     }
-  }, [currentTask, taskStartTime, currentGoal]);
+  }, [currentTask, taskStartTime, currentGoal, rewardStack]);
 
   const handleAddToQueue = (taskTitle: string) => {
     const newTask: QueuedTaskData = {

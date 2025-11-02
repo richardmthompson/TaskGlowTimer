@@ -1,4 +1,5 @@
 import CompletedTask from "./CompletedTask";
+import type { RewardSummary } from "../types/reward";
 
 export interface CompletedTaskData {
   id: string;
@@ -6,6 +7,7 @@ export interface CompletedTaskData {
   startTime: string;
   endTime: string;
   goalId?: string | null;
+  rewards?: RewardSummary;
 }
 
 interface CompletedTasksListProps {
