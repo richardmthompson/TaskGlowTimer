@@ -14,6 +14,7 @@ import GoalsList from "@/components/GoalsList";
 import GoalTaskConnections from "@/components/GoalTaskConnections";
 import CurrentGoal from "@/components/CurrentGoal";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import RewardStack from "@/components/RewardStack";
 import type { Goal } from "../types/goal";
 import type { Reward, RewardSummary } from "../types/reward";
 
@@ -532,19 +533,22 @@ export default function Timer() {
               />
             </div>
 
-            <div className="flex flex-col items-center gap-4">
-              <CircularTimer
-                elapsedSeconds={elapsedSeconds}
-                totalSeconds={1800}
-                defaultColor={isDarkMode ? darkColors.clockDefault : colors.clockDefault}
-                elapsedColor={isDarkMode ? darkColors.clockElapsed : colors.clockElapsed}
-                outlineColor={isDarkMode ? darkColors.outline : colors.outline}
-              />
-              <TimerControls
-                isRunning={isRunning}
-                onPlayPause={handlePlayPause}
-                onDone={handleDone}
-              />
+            <div className="flex items-start gap-6">
+              <div className="flex flex-col items-center gap-4">
+                <CircularTimer
+                  elapsedSeconds={elapsedSeconds}
+                  totalSeconds={1800}
+                  defaultColor={isDarkMode ? darkColors.clockDefault : colors.clockDefault}
+                  elapsedColor={isDarkMode ? darkColors.clockElapsed : colors.clockElapsed}
+                  outlineColor={isDarkMode ? darkColors.outline : colors.outline}
+                />
+                <TimerControls
+                  isRunning={isRunning}
+                  onPlayPause={handlePlayPause}
+                  onDone={handleDone}
+                />
+              </div>
+              <RewardStack rewards={rewardStack} />
             </div>
           </div>
         </div>

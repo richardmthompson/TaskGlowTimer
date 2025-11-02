@@ -1,3 +1,6 @@
+import type { RewardSummary } from "../types/reward";
+import TaskRewards from "./TaskRewards";
+
 interface CompletedTaskProps {
   id: string;
   title: string;
@@ -7,6 +10,7 @@ interface CompletedTaskProps {
   outlineColor?: string;
   onClick?: () => void;
   isSelected?: boolean;
+  rewards?: RewardSummary;
 }
 
 export default function CompletedTask({
@@ -18,6 +22,7 @@ export default function CompletedTask({
   outlineColor = "#d97706",
   onClick,
   isSelected = false,
+  rewards,
 }: CompletedTaskProps) {
   return (
     <button
@@ -44,8 +49,11 @@ export default function CompletedTask({
         style={{ backgroundColor: outlineColor }}
       />
 
-      <div className="text-sm font-bold truncate text-gray-800 dark:text-gray-300">
-        {title}
+      <div className="flex items-center justify-between gap-2">
+        <div className="text-sm font-bold truncate text-gray-800 dark:text-gray-300 flex-1">
+          {title}
+        </div>
+        <TaskRewards rewards={rewards} />
       </div>
     </button>
   );

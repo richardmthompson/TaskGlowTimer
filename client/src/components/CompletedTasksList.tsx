@@ -46,6 +46,7 @@ export default function CompletedTasksList({
           outlineColor={outlineColor}
           onClick={() => onTaskClick?.(task)}
           isSelected={selectedTaskId === task.id}
+          rewards={task.rewards}
         />
       ))}
     </div>
