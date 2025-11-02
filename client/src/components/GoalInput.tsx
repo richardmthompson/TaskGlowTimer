@@ -27,11 +27,10 @@ const GoalInput = forwardRef<HTMLTextAreaElement, GoalInputProps>(({ onAddGoal, 
       onChange={(e) => setValue(e.target.value)}
       onKeyDown={handleKeyDown}
       placeholder="Add a goal..."
-      className="w-full h-20 px-3 py-2 rounded-lg border-2 resize-none focus:outline-none focus:ring-2 text-xs"
+      className="w-full h-20 px-3 py-2 rounded-lg border-2 resize-none focus:outline-none focus:ring-2 text-xs font-bold text-gray-800 dark:text-gray-300"
       style={{
         backgroundColor: backgroundColor,
         borderColor: outlineColor,
-        color: '#1f2937',
         boxShadow: `0 0 0 2px transparent`,
       }}
       onFocus={(e) => {
