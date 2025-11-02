@@ -1,8 +1,8 @@
-# Focus Timer - Productivity Task Tracker
+# VoxPlan Web-Mini - Productivity Timer with Time-Tracking Rewards
 
 ## Overview
 
-A productivity-focused timer application designed to help users track work sessions with a clean, minimal interface. The app features a sticky-note style task input, a 30-minute circular timer with pie-fill animation, completed task history with chronological display, customizable color themes, and a task queue system with drag-and-drop reordering. Built with a focus on clarity and distraction-free workflow, drawing inspiration from Linear and Apple HIG design principles.
+A productivity-focused timer application designed to help users track work sessions with a clean, minimal interface. Branded as "VoxPlan Web-Mini" with an NES-style power-up badge logo positioned above the app border in the top-left corner. The app features a sticky-note style task input, a 30-minute circular timer with pie-fill animation, completed task history with chronological display, time-tracking reward system (medals and diamonds), goals management, customizable color themes, and a task queue system with drag-and-drop reordering. Built with a focus on clarity and distraction-free workflow, drawing inspiration from Linear and Apple HIG design principles.
 
 ## User Preferences
 
@@ -68,6 +68,11 @@ Preferred communication style: Simple, everyday language.
 - HTML5 drag-and-drop API for queue reordering
 - No global state management library (Redux/Zustand) - keeping state local to components
 
+**Branding & Layout**
+- **Brand Badge**: NES-style power-up badge displaying "VP" (VoxPlan) logo with cog icon; positioned above app border in top-left corner; features golden gradient shield design with bold dark border; includes "VoxPlan Web-Mini" subtitle
+- **Reserved Space**: Right side of header area reserved for future authentication features
+- **Layout Positioning**: Badge anchored to the bordered card container (not viewport), maintaining consistent offset across responsive breakpoints
+
 **Key Features**
 - **Theme Toggle**: Switch between light and dark modes via button (center top) or Shift+M keyboard shortcut; theme preference saved in localStorage
 - **Sticky Note Input**: Yellow sticky-style textarea (dark: olive-brown) for entering current task with 5-second glow animation; shows red shake animation if attempting to overwrite existing content
@@ -87,6 +92,7 @@ Preferred communication style: Simple, everyday language.
 - **Dark Mode Colors**: Researched modern dark mode palette - darker bubbles (completed: dark emerald, goals: dark orange, queue: dark blue-gray, sticky: olive-brown) with subtle lighter borders; clock uses gray-700 background with light blue progress (#60a5fa) and dark gray outline; buttons use blue-500 and emerald-500 for visibility
 - **Drag-and-Drop**: Reorder queued tasks by dragging with grip handle
 - **Keyboard Shortcuts**: Full keyboard navigation for efficient workflow (see Keyboard Shortcuts section or Help panel)
+- **Time-Tracking Rewards**: Earn gold medals every 30 minutes of work; two medals automatically consolidate into a purple diamond (representing 1 hour); rewards stack vertically beside timer; reward summaries displayed on completed task cards
 
 ### Backend Architecture
 

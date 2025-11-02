@@ -15,6 +15,7 @@ import GoalTaskConnections from "@/components/GoalTaskConnections";
 import CurrentGoal from "@/components/CurrentGoal";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import RewardStack from "@/components/RewardStack";
+import BrandBadge from "@/components/BrandBadge";
 import type { Goal } from "../types/goal";
 import type { Reward, RewardSummary } from "../types/reward";
 
@@ -408,9 +409,12 @@ export default function Timer() {
   }, [isRunning, completedTasks, queuedTasks, goals, currentGoal, selectedTask, selectedQueuedTaskId, selectedGoalInStack, handleDone, handlePlayPause]);
 
   return (
-    <>
     <div className="flex justify-center items-center h-screen bg-background px-8">
-      <div className="flex max-w-[1000px] w-full h-[90vh] border-4 rounded-lg relative bg-[#faf8f5] dark:bg-[#1a1a1a] border-[#e8e4dc] dark:border-[#2a2a2a]">
+      <div className="relative">
+        <div className="absolute -top-16 left-0 z-20">
+          <BrandBadge />
+        </div>
+        <div className="flex max-w-[1000px] w-full h-[90vh] border-4 rounded-lg relative bg-[#faf8f5] dark:bg-[#1a1a1a] border-[#e8e4dc] dark:border-[#2a2a2a]">
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
           <ThemeToggle />
         </div>
@@ -557,16 +561,16 @@ export default function Timer() {
     </div>
 
     <HelpPanel
-      isExpanded={isHelpExpanded}
-      onToggle={() => setIsHelpExpanded(!isHelpExpanded)}
-    />
+        isExpanded={isHelpExpanded}
+        onToggle={() => setIsHelpExpanded(!isHelpExpanded)}
+      />
 
-    <SettingsPanel
-      colors={colors}
-      onChange={setColors}
-      isExpanded={isSettingsExpanded}
-      onToggle={() => setIsSettingsExpanded(!isSettingsExpanded)}
-    />
-    </>
+      <SettingsPanel
+        colors={colors}
+        onChange={setColors}
+        isExpanded={isSettingsExpanded}
+        onToggle={() => setIsSettingsExpanded(!isSettingsExpanded)}
+      />
+    </div>
   );
 }
