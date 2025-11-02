@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import QueuedTask from "./QueuedTask";
+import { GripVertical } from "lucide-react";
 
 export interface QueuedTaskData {
   id: string;
@@ -51,8 +52,19 @@ export default function QueuedTasksList({
 
   if (tasks.length === 0) {
     return (
-      <div className="text-muted-foreground text-sm text-left py-4">
-        No queued tasks
+      <div className="flex flex-col gap-2">
+        <div
+          className="flex items-center gap-2 py-2 px-3 rounded-lg border-2 opacity-40"
+          style={{
+            backgroundColor,
+            borderColor: outlineColor,
+          }}
+        >
+          <GripVertical className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+          <div className="text-sm font-bold flex-1 text-gray-800 dark:text-gray-300 italic">
+            No queued tasks
+          </div>
+        </div>
       </div>
     );
   }
