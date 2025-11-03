@@ -1,26 +1,29 @@
-import { Settings } from "lucide-react";
+import badgeOption1 from '@assets/generated_images/Golden_NES_power-up_badge_6da36c0b.png';
+import badgeOption2 from '@assets/generated_images/Golden_coin_medallion_badge_6481ecad.png';
+import badgeOption3 from '@assets/generated_images/Pixel-art_gear_badge_65aa7cca.png';
+import badgeOption4 from '@assets/generated_images/Trophy_achievement_badge_13de084e.png';
 
 export default function BrandBadge() {
+  // Choose which badge design to use (1-4)
+  const selectedBadge = 1;
+  
+  const badgeImages = [badgeOption1, badgeOption2, badgeOption3, badgeOption4];
+  const currentBadge = badgeImages[selectedBadge - 1];
+
   return (
-    <div className="flex flex-col items-center gap-1">
-      <div 
-        className="relative flex items-center justify-center px-3 py-2 rounded-md border-[3px] border-amber-900 dark:border-amber-700 shadow-lg"
-        style={{
-          background: "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
-        }}
-        data-testid="brand-badge"
-      >
-        <div className="absolute inset-0 rounded-md bg-white/20 dark:bg-white/10" />
-        
-        <div className="relative flex items-center gap-1.5">
-          <span className="text-lg font-black text-amber-950 dark:text-amber-950" style={{ fontFamily: 'monospace' }}>
-            VP
-          </span>
-          <Settings className="w-4 h-4 text-amber-950 dark:text-amber-950" strokeWidth={3} />
-        </div>
+    <div className="flex items-center gap-3" data-testid="brand-badge">
+      <div className="w-12 h-12 flex-shrink-0">
+        <img 
+          src={currentBadge} 
+          alt="VoxPlan Badge" 
+          className="w-full h-full object-contain"
+        />
       </div>
       
-      <div className="text-[10px] font-bold text-muted-foreground tracking-tight">
+      <div 
+        className="text-[48px] leading-[48px] font-black tracking-tight text-amber-600 dark:text-amber-500"
+        style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+      >
         VoxPlan Web-Mini
       </div>
     </div>
