@@ -56,10 +56,10 @@ Preferred communication style: Simple, everyday language.
 **Design System**
 - Custom color system using CSS variables for theme customization (5 customizable colors in settings panel)
 - Typography: Inter font family for UI text, JetBrains Mono for monospace timer displays
-- Fixed 1000px centered layout with pale beige background (#faf8f5)
-- Layout structure: Left panel (28% width split 50/50 vertically: Completed top, Goals bottom), Center area (flex-1: Task Queue top, Sticky + Timer bottom), Right side (Circular Timer)
+- Fixed 1200px centered layout with pale beige background (#faf8f5)
+- Layout structure: Three-column design - Left: Goals stack (28% width), Center-left: Completed tasks (28% width split from left panel), Right: Queue/Sticky/Timer area (flex-1)
 - Purposeful animations using Tailwind's animation utilities
-- Spacing primitives based on Tailwind's scale (2, 4, 6, 8, 12, 16 units)
+- Spacing primitives based on Tailwind's scale (1, 2, 4, 6, 8, 12, 16 units); minimal gap-1 (4px) used for compact vertical spacing in goal/sticky area
 
 **State Management**
 - Component-level state using React hooks (useState, useEffect, useRef)
@@ -69,9 +69,10 @@ Preferred communication style: Simple, everyday language.
 - No global state management library (Redux/Zustand) - keeping state local to components
 
 **Branding & Layout**
-- **Brand Badge**: NES-style power-up badge displaying "VP" (VoxPlan) logo with cog icon; positioned above app border in top-left corner; features golden gradient shield design with bold dark border; includes "VoxPlan Web-Mini" subtitle
+- **Brand Badge**: Gold coin medallion design positioned above app border in top-left corner; features radial gradient with warm gold tones (#d4af37 to #f4e4c1); smaller "VoxPlan Web-Mini" text to the right
 - **Reserved Space**: Right side of header area reserved for future authentication features
 - **Layout Positioning**: Badge anchored to the bordered card container (not viewport), maintaining consistent offset across responsive breakpoints
+- **Layout Width**: Expanded to 1200px to provide more breathing room for all panels and components
 
 **Key Features**
 - **Theme Toggle**: Switch between light and dark modes via button (center top) or Shift+M keyboard shortcut; theme preference saved in localStorage
@@ -79,11 +80,14 @@ Preferred communication style: Simple, everyday language.
 - **Circular Timer**: 30-minute countdown with animated pie-fill visualization; timer and controls positioned together (timer above, play/done buttons below)
 - **Play/Pause/Done Controls**: Blue play/pause and green done buttons positioned directly below circular timer
 - **Status Indicator**: Shows "Working on..." with animated dots when active, "paused" when stopped
-- **Completed Tasks**: Top half of left panel showing chronological history (newest at bottom) with calendar-style timestamps
-- **Goals System**: Bottom half of left panel with goal stack; users add goals, promote one to "Current Goal" (displayed above sticky), tasks auto-assign to current goal
-- **Current Goal**: Displays above sticky note when active; clicking ✕ returns goal to stack; SVG connections draw from current goal to assigned tasks
+- **Completed Tasks**: Center-left panel showing chronological history (newest at bottom) with calendar-style timestamps; displays goal abbreviation badges (first 3 letters in caps) with goal color for quick visual identification
+- **Goals System**: Left panel with goal stack; users add goals, promote one to "Current Goal" (displayed above sticky), tasks auto-assign to current goal
+- **Current Goal**: Displays above sticky note when active with reduced padding (py-1.5 px-3) and minimal spacing (gap-1, 4px) to status indicator; clicking ✕ returns goal to stack; SVG connections draw from goals to assigned tasks
+- **Bidirectional Selection**: Clicking a completed task automatically highlights its associated goal in the Goals stack, enhancing visual connection between tasks and their goals
 - **Task Queue**: Top-right area with input field and draggable task list for planning upcoming work
-- **Task Selection**: Click completed or queued tasks to view details; selected completed tasks show green ring glow, queued tasks show lighter blue when selected with quick-start Play button
+- **Task Selection**: Click completed or queued tasks to view details in expanded 2-column task details panel below timer; selected completed tasks show green ring glow and highlight associated goal; queued tasks show lighter blue when selected with quick-start Play button
+- **Task Details Panel**: Spans full width below sticky note and timer; 2-column grid layout with task title/type on left, start/end times and goal badge on right; compact spacing (mt-4) from timer; improved dark mode text readability (gray-200/300/400 scale)
+- **SVG Goal Connections**: Positioned at main card root level (z-index 0) to prevent clipping; draws curved lines from goals to associated completed tasks; remains visible during scrolling
 - **Error Prevention**: Moving queued tasks to non-empty sticky note triggers red shake animation (0.5s) to prevent accidental overwrites
 - **Goal Promotion**: Select goal via 'G' or click, then press Enter to promote to current; supports both keyboard-only and click+Enter workflows
 - **Auto-Assignment**: Tasks and queue items automatically inherit current goal when created; displayed in completed task cards

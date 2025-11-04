@@ -519,7 +519,7 @@ export default function Timer() {
 
         <div className="h-[65%] pt-4 flex flex-col">
           <div className="flex items-start gap-8">
-            <div className="flex flex-col gap-2 flex-1 max-w-[400px]">
+            <div className="flex flex-col gap-1 flex-1 max-w-[400px]">
               <CurrentGoal
                 goal={currentGoal}
                 onClear={() => {
@@ -529,9 +529,7 @@ export default function Timer() {
                   }
                 }}
               />
-              <div className="mb-2">
-                <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
-              </div>
+              <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
               <StickyNote
                 ref={stickyNoteRef}
                 value={currentTask}

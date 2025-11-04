@@ -8,7 +8,7 @@ interface CurrentGoalProps {
 export default function CurrentGoal({ goal, onClear }: CurrentGoalProps) {
   if (!goal) {
     return (
-      <div className="mb-3 text-xs text-muted-foreground italic text-center">
+      <div className="text-xs text-muted-foreground italic text-center">
         No active goal (select from Goals panel)
       </div>
     );
@@ -16,7 +16,7 @@ export default function CurrentGoal({ goal, onClear }: CurrentGoalProps) {
 
   return (
     <div 
-      className="mb-2 px-3 py-1.5 rounded-lg border-2 flex items-center justify-between"
+      className="px-3 py-1.5 rounded-lg border-2 flex items-center justify-between"
       style={{
         backgroundColor: goal.color,
         borderColor: '#d97706',
