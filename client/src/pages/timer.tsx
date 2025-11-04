@@ -43,7 +43,11 @@ export default function Timer() {
   const [lastRewardAt, setLastRewardAt] = useState<number>(0);
 
   const [colors, setColors] = useState<ColorSettings>({
-    stickyBackground: "#fef3c7",
+    stickyBackground: "#fffef5", // Very pale cream-yellow
+    // Alternative options to try:
+    // stickyBackground: "#fef3c7", // Original yellow
+    // stickyBackground: "#fed7aa", // Peachy orange
+    // stickyBackground: "#ffedd5", // Pale peach
     completedBackground: "#d1fae5",
     goalBackground: "#fed7aa",
     clockDefault: "#e5e7eb",
