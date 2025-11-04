@@ -76,13 +76,14 @@ Preferred communication style: Simple, everyday language.
 
 **Key Features**
 - **Theme Toggle**: Switch between light and dark modes via button (center top) or Shift+M keyboard shortcut; theme preference saved in localStorage
-- **Sticky Note Input**: Yellow sticky-style textarea (dark: olive-brown) for entering current task with 5-second glow animation; shows red shake animation if attempting to overwrite existing content
+- **Sticky Note Input**: Yellow sticky-style textarea (dark: clean slate #334155) for entering current task with 5-second glow animation; shows red shake animation if attempting to overwrite existing content
+- **Visual Grouping**: Sticky note and circular timer are wrapped in a subtle transparent container (30% opacity background, 50% opacity border, rounded corners) to visually group the task entry and timing controls
 - **Circular Timer**: 30-minute countdown with animated pie-fill visualization; timer and controls positioned together (timer above, play/done buttons below)
 - **Play/Pause/Done Controls**: Blue play/pause and green done buttons positioned directly below circular timer
 - **Status Indicator**: Shows "Working on..." with animated dots when active, "paused" when stopped
-- **Completed Tasks**: Center-left panel showing chronological history (newest at bottom) with calendar-style timestamps; displays goal abbreviation badges (first 3 letters in caps) with goal color for quick visual identification
-- **Goals System**: Left panel with goal stack; users add goals, promote one to "Current Goal" (displayed above sticky), tasks auto-assign to current goal
-- **Current Goal**: Displays above sticky note when active with reduced padding (py-1.5 px-3) and minimal spacing (gap-1, 4px) to status indicator; clicking ✕ returns goal to stack; SVG connections draw from goals to assigned tasks
+- **Completed Tasks**: Center-left panel showing chronological history (newest at bottom) with calendar-style timestamps; displays goal abbreviation badges (first 3 letters in caps) with theme-aware goal color for quick visual identification
+- **Goals System**: Left panel with goal stack; users add goals, promote one to "Current Goal" (displayed above sticky), tasks auto-assign to current goal; theme-aware coloring with deep purple (#581c87) in dark mode and orange in light mode
+- **Current Goal**: Displays above sticky note when active with reduced padding (py-1.5 px-3) and minimal spacing (gap-1, 4px) to status indicator; clicking ✕ returns goal to stack; SVG connections draw from goals to assigned tasks; text and buttons adapt to theme for proper contrast
 - **Bidirectional Selection**: Clicking a completed task automatically highlights its associated goal in the Goals stack, enhancing visual connection between tasks and their goals
 - **Task Queue**: Top-right area with input field and draggable task list for planning upcoming work
 - **Task Selection**: Click completed or queued tasks to view details in expanded 2-column task details panel below timer; selected completed tasks show green ring glow and highlight associated goal; queued tasks show lighter blue when selected with quick-start Play button
@@ -90,10 +91,11 @@ Preferred communication style: Simple, everyday language.
 - **SVG Goal Connections**: Positioned at main card root level (z-index 0) to prevent clipping; draws curved lines from goals to associated completed tasks; remains visible during scrolling
 - **Error Prevention**: Moving queued tasks to non-empty sticky note triggers red shake animation (0.5s) to prevent accidental overwrites
 - **Goal Promotion**: Select goal via 'G' or click, then press Enter to promote to current; supports both keyboard-only and click+Enter workflows
-- **Auto-Assignment**: Tasks and queue items automatically inherit current goal when created; displayed in completed task cards
+- **Auto-Assignment**: Tasks and queue items automatically inherit current goal when created; displayed in completed task cards with theme-aware goal badges
 - **Color Settings**: Collapsible bottom-right overlay with 5 customizable color pickers (sticky, completed, clock default, clock elapsed, outline); colors automatically adapt for dark mode
 - **Help Panel**: Collapsible bottom-left overlay displaying all keyboard shortcuts and their actions
-- **Dark Mode Colors**: Researched modern dark mode palette - darker bubbles (completed: dark emerald, goals: dark orange, queue: dark blue-gray, sticky: olive-brown) with subtle lighter borders; clock uses gray-700 background with light blue progress (#60a5fa) and dark gray outline; buttons use blue-500 and emerald-500 for visibility
+- **Theme-Aware Goal Colors**: Comprehensive theme system where all goal surfaces (goal cards, current goal, task badges, details panel) dynamically adapt colors based on active theme; light mode uses warm orange, dark mode uses deep purple (#581c87); text and buttons automatically switch to light colors in dark mode for proper contrast
+- **Dark Mode Colors**: Refined dark mode palette - completed tasks: dark emerald, goals: deep purple (#581c87), queue: dark blue-gray, sticky: clean slate (#334155); clock uses gray-700 background with light blue progress (#60a5fa) and dark gray outline; buttons use blue-500 and emerald-500 for visibility
 - **Drag-and-Drop**: Reorder queued tasks by dragging with grip handle
 - **Keyboard Shortcuts**: Full keyboard navigation for efficient workflow (see Keyboard Shortcuts section or Help panel)
 - **Time-Tracking Rewards**: Earn gold medals every 30 minutes of work; two medals automatically consolidate into a purple diamond (representing 1 hour); rewards stack vertically beside timer; reward summaries displayed on completed task cards
