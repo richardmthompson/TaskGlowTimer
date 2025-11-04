@@ -11,6 +11,8 @@ interface CompletedTaskProps {
   onClick?: () => void;
   isSelected?: boolean;
   rewards?: RewardSummary;
+  goalAbbreviation?: string;
+  goalColor?: string;
 }
 
 export default function CompletedTask({
@@ -23,6 +25,8 @@ export default function CompletedTask({
   onClick,
   isSelected = false,
   rewards,
+  goalAbbreviation,
+  goalColor,
 }: CompletedTaskProps) {
   return (
     <button
@@ -53,7 +57,20 @@ export default function CompletedTask({
         <div className="text-sm font-bold truncate text-gray-800 dark:text-gray-300 flex-1">
           {title}
         </div>
-        <TaskRewards rewards={rewards} />
+        <div className="flex items-center gap-2">
+          {goalAbbreviation && (
+            <div 
+              className="px-1.5 py-0.5 rounded text-[10px] font-black tracking-wide"
+              style={{
+                backgroundColor: goalColor,
+                color: '#000',
+              }}
+            >
+              {goalAbbreviation}
+            </div>
+          )}
+          <TaskRewards rewards={rewards} />
+        </div>
       </div>
     </button>
   );

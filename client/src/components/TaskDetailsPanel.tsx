@@ -7,11 +7,13 @@ interface CompletedTask {
   title: string;
   startTime: string;
   endTime: string;
+  goalId?: string | null;
 }
 
 interface QueuedTask {
   type: 'queued';
   title: string;
+  goalId?: string | null;
 }
 
 type Task = CompletedTask | QueuedTask;
@@ -22,6 +24,8 @@ interface TaskDetailsPanelProps {
   completedBgColor?: string;
   queuedBgColor?: string;
   outlineColor?: string;
+  goalTitle?: string;
+  goalColor?: string;
 }
 
 export default function TaskDetailsPanel({
@@ -30,6 +34,8 @@ export default function TaskDetailsPanel({
   completedBgColor = "#d1fae5",
   queuedBgColor = "#dbeafe",
   outlineColor = "#d97706",
+  goalTitle,
+  goalColor,
 }: TaskDetailsPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -59,7 +65,7 @@ export default function TaskDetailsPanel({
     <div
       ref={panelRef}
       data-testid="panel-task-details"
-      className="mt-8 p-6 rounded-xl border-2 relative animate-in fade-in slide-in-from-bottom-4 duration-300"
+      className="mt-4 p-6 rounded-xl border-2 relative animate-in fade-in slide-in-from-bottom-4 duration-300"
       style={{
         backgroundColor,
         borderColor,
@@ -75,25 +81,44 @@ export default function TaskDetailsPanel({
         <X className="w-4 h-4" />
       </Button>
 
-      <div className="space-y-3">
-        <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          {isCompleted ? 'Completed Task Details' : 'Queued Task Details'}
-        </div>
-
-        <div className="text-lg font-medium" style={{ color: "#1f2937" }}>
-          {task.title}
-        </div>
-
-        {isCompleted && (
-          <div className="flex gap-6 text-sm font-mono" style={{ color: "#1f2937" }}>
-            <div>
-              <span className="text-muted-foreground">Started:</span> {task.startTime}
-            </div>
-            <div>
-              <span className="text-muted-foreground">Ended:</span> {task.endTime}
-            </div>
+      <div className="grid grid-cols-2 gap-6">
+        <div className="space-y-3">
+          <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+            {isCompleted ? 'Completed Task' : 'Queued Task'}
           </div>
-        )}
+
+          <div className="text-lg font-medium text-gray-800 dark:text-gray-200">
+            {task.title}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {isCompleted && (
+            <div className="space-y-2 text-sm font-mono text-gray-700 dark:text-gray-300">
+              <div>
+                <span className="text-gray-500 dark:text-gray-400">Started:</span> {task.startTime}
+              </div>
+              <div>
+                <span className="text-gray-500 dark:text-gray-400">Ended:</span> {task.endTime}
+              </div>
+            </div>
+          )}
+          
+          {goalTitle && (
+            <div className="mt-2">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Goal:</div>
+              <div 
+                className="inline-block px-2 py-1 rounded text-sm font-semibold"
+                style={{
+                  backgroundColor: goalColor,
+                  color: '#000',
+                }}
+              >
+                {goalTitle}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

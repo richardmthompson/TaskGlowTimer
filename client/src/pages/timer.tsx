@@ -30,8 +30,8 @@ export default function Timer() {
   const [selectedGoalInStack, setSelectedGoalInStack] = useState<string | null>(null);
   const [taskStartTime, setTaskStartTime] = useState<Date | null>(null);
   const [selectedTask, setSelectedTask] = useState<
-    | { type: 'completed'; title: string; startTime: string; endTime: string }
-    | { type: 'queued'; title: string; id: string }
+    | { type: 'completed'; title: string; startTime: string; endTime: string; goalId?: string | null }
+    | { type: 'queued'; title: string; id: string; goalId?: string | null }
     | null
   >(null);
   const [selectedQueuedTaskId, setSelectedQueuedTaskId] = useState<string | null>(null);
@@ -414,25 +414,40 @@ export default function Timer() {
         <div className="absolute -top-16 left-0 z-20">
           <BrandBadge />
         </div>
-        <div className="flex max-w-[1000px] w-full h-[90vh] border-4 rounded-lg relative bg-[#faf8f5] dark:bg-[#1a1a1a] border-[#e8e4dc] dark:border-[#2a2a2a]">
+        <div className="flex max-w-[1200px] w-full h-[90vh] border-4 rounded-lg relative bg-[#faf8f5] dark:bg-[#1a1a1a] border-[#e8e4dc] dark:border-[#2a2a2a]">
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
           <ThemeToggle />
         </div>
-        <div className="w-[28%] flex flex-col relative">
+        <GoalTaskConnections goals={goals} tasks={completedTasks} currentGoal={currentGoal} />
+        
+        <div className="w-[28%] flex flex-col relative" style={{ zIndex: 1 }}>
         <div className="h-1/2 p-4 pb-2 flex flex-col items-end border-b-2 border-[#e8e4dc] dark:border-[#2a2a2a]">
           <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground text-right w-full">
             Completed Today
           </h2>
-          <div className="flex-1 overflow-y-auto w-full relative">
-            <GoalTaskConnections goals={goals} tasks={completedTasks} currentGoal={currentGoal} />
-            <div style={{ zIndex: 1, position: 'relative' }}>
+          <div className="flex-1 w-full relative">
+            <div className="absolute inset-0 overflow-y-auto pr-2">
               <CompletedTasksList
                 tasks={completedTasks}
                 backgroundColor={isDarkMode ? darkColors.completedBackground : colors.completedBackground}
                 outlineColor={isDarkMode ? darkColors.outline : colors.outline}
+                goals={goals}
+                currentGoal={currentGoal}
                 onTaskClick={(task) => {
                   setSelectedTask({ ...task, type: 'completed' });
                   setSelectedQueuedTaskId(null);
+                  // Bidirectional selection: select the task's goal too
+                  if (task.goalId) {
+                    if (currentGoal?.id === task.goalId) {
+                      // Goal is current goal, don't select in stack
+                      setSelectedGoalInStack(null);
+                    } else {
+                      const goalInStack = goals.find(g => g.id === task.goalId);
+                      if (goalInStack) {
+                        setSelectedGoalInStack(goalInStack.id);
+                      }
+                    }
+                  }
                 }}
                 selectedTaskId={selectedTask?.type === 'completed' ? completedTasks.find(t => t.title === selectedTask.title && t.startTime === selectedTask.startTime)?.id : null}
               />
@@ -502,9 +517,9 @@ export default function Timer() {
           </div>
         </div>
 
-        <div className="h-[65%] pt-4">
+        <div className="h-[65%] pt-4 flex flex-col">
           <div className="flex items-start gap-8">
-            <div className="flex flex-col gap-4 flex-1 max-w-[400px]">
+            <div className="flex flex-col gap-2 flex-1 max-w-[400px]">
               <CurrentGoal
                 goal={currentGoal}
                 onClear={() => {
@@ -514,7 +529,7 @@ export default function Timer() {
                   }
                 }}
               />
-              <div className="mb-4">
+              <div className="mb-2">
                 <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
               </div>
               <StickyNote
@@ -526,14 +541,6 @@ export default function Timer() {
                 outlineColor={isDarkMode ? darkColors.outline : colors.outline}
                 onEnterKey={handlePlayPause}
                 showError={showStickyError}
-              />
-
-              <TaskDetailsPanel
-                task={selectedTask}
-                onClose={() => setSelectedTask(null)}
-                completedBgColor={isDarkMode ? darkColors.completedBackground : colors.completedBackground}
-                queuedBgColor={isDarkMode ? "#1a3f4f" : "#dbeafe"}
-                outlineColor={isDarkMode ? darkColors.outline : colors.outline}
               />
             </div>
 
@@ -555,6 +562,27 @@ export default function Timer() {
               <RewardStack rewards={rewardStack} />
             </div>
           </div>
+
+          {selectedTask && (() => {
+            let goalInfo: { title?: string; color?: string } = { title: undefined, color: undefined };
+            if (selectedTask.goalId) {
+              const goal = currentGoal?.id === selectedTask.goalId ? currentGoal : goals.find(g => g.id === selectedTask.goalId);
+              if (goal) {
+                goalInfo = { title: goal.title, color: goal.color };
+              }
+            }
+            return (
+              <TaskDetailsPanel
+                task={selectedTask}
+                onClose={() => setSelectedTask(null)}
+                completedBgColor={isDarkMode ? darkColors.completedBackground : colors.completedBackground}
+                queuedBgColor={isDarkMode ? "#1a3f4f" : "#dbeafe"}
+                outlineColor={isDarkMode ? darkColors.outline : colors.outline}
+                goalTitle={goalInfo.title}
+                goalColor={goalInfo.color}
+              />
+            );
+          })()}
         </div>
       </div>
       </div>

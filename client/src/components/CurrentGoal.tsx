@@ -16,7 +16,7 @@ export default function CurrentGoal({ goal, onClear }: CurrentGoalProps) {
 
   return (
     <div 
-      className="mb-3 px-4 py-2 rounded-lg border-2 flex items-center justify-between"
+      className="mb-2 px-3 py-1.5 rounded-lg border-2 flex items-center justify-between"
       style={{
         backgroundColor: goal.color,
         borderColor: '#d97706',
