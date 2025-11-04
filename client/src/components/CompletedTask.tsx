@@ -60,10 +60,9 @@ export default function CompletedTask({
         <div className="flex items-center gap-2">
           {goalAbbreviation && (
             <div 
-              className="px-1.5 py-0.5 rounded text-[10px] font-black tracking-wide"
+              className="px-1.5 py-0.5 rounded text-[10px] font-black tracking-wide text-gray-900 dark:text-gray-100"
               style={{
                 backgroundColor: goalColor,
-                color: '#000',
               }}
             >
               {goalAbbreviation}

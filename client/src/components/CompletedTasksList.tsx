@@ -19,6 +19,7 @@ interface CompletedTasksListProps {
   selectedTaskId?: string | null;
   goals?: Goal[];
   currentGoal?: Goal | null;
+  goalBackgroundColor?: string;
 }
 
 export default function CompletedTasksList({
@@ -29,6 +30,7 @@ export default function CompletedTasksList({
   selectedTaskId,
   goals = [],
   currentGoal = null,
+  goalBackgroundColor,
 }: CompletedTasksListProps) {
   const getGoalInfo = (goalId: string | null | undefined) => {
     if (!goalId) return { abbreviation: undefined, color: undefined };
@@ -38,7 +40,7 @@ export default function CompletedTasksList({
     
     return {
       abbreviation: goal.title.substring(0, 3).toUpperCase(),
-      color: goal.color,
+      color: goalBackgroundColor || goal.color,
     };
   };
   if (tasks.length === 0) {

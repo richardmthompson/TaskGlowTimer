@@ -51,11 +51,11 @@ export default function Timer() {
     outline: "#d97706",
   });
 
-  // Dark mode colors
+  // Dark mode colors - refined palette
   const [darkColors] = useState({
-    stickyBackground: "#3f3f1a",
-    completedBackground: "#1a3f2f",
-    goalBackground: "#3f2f1a",
+    stickyBackground: "#334155", // Slate-700: clean charcoal instead of dirty green-yellow
+    completedBackground: "#1a3f2f", // Dark emerald: keep as is
+    goalBackground: "#581c87", // Purple-900: rich deep purple instead of brown
     clockDefault: "#374151",
     clockElapsed: "#60a5fa",
     outline: "#1f2937",
@@ -200,13 +200,11 @@ export default function Timer() {
     setQueuedTasks([...queuedTasks, newTask]);
   };
 
-  const goalColors = ['#fef3c7', '#dbeafe', '#e0e7ff', '#fce7f3', '#d1fae5', '#fed7aa'];
-  
   const handleAddGoal = (title: string) => {
     const newGoal: Goal = {
       id: Date.now().toString(),
       title: title,
-      color: goalColors[goals.length % goalColors.length],
+      color: isDarkMode ? darkColors.goalBackground : colors.goalBackground,
     };
     setGoals([...goals, newGoal]);
   };
@@ -433,6 +431,7 @@ export default function Timer() {
                 outlineColor={isDarkMode ? darkColors.outline : colors.outline}
                 goals={goals}
                 currentGoal={currentGoal}
+                goalBackgroundColor={isDarkMode ? darkColors.goalBackground : colors.goalBackground}
                 onTaskClick={(task) => {
                   setSelectedTask({ ...task, type: 'completed' });
                   setSelectedQueuedTaskId(null);
@@ -484,6 +483,7 @@ export default function Timer() {
                 setSelectedGoalInStack(null);
               }}
               selectedGoalId={selectedGoalInStack}
+              backgroundColor={isDarkMode ? darkColors.goalBackground : colors.goalBackground}
             />
           </div>
         </div>
@@ -528,36 +528,45 @@ export default function Timer() {
                     setCurrentGoal(null);
                   }
                 }}
+                backgroundColor={isDarkMode ? darkColors.goalBackground : colors.goalBackground}
               />
-              <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
-              <StickyNote
-                ref={stickyNoteRef}
-                value={currentTask}
-                onChange={setCurrentTask}
-                isActive={isRunning}
-                backgroundColor={isDarkMode ? darkColors.stickyBackground : colors.stickyBackground}
-                outlineColor={isDarkMode ? darkColors.outline : colors.outline}
-                onEnterKey={handlePlayPause}
-                showError={showStickyError}
-              />
-            </div>
+              
+              {/* Subtle grouping container for sticky + clock */}
+              <div className="rounded-lg border p-4 bg-[#faf8f5]/30 dark:bg-[#1a1a1a]/30 border-[#e8e4dc]/50 dark:border-[#2a2a2a]/50">
+                <div className="flex items-start gap-8">
+                  <div className="flex flex-col gap-1 flex-1">
+                    <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
+                    <StickyNote
+                      ref={stickyNoteRef}
+                      value={currentTask}
+                      onChange={setCurrentTask}
+                      isActive={isRunning}
+                      backgroundColor={isDarkMode ? darkColors.stickyBackground : colors.stickyBackground}
+                      outlineColor={isDarkMode ? darkColors.outline : colors.outline}
+                      onEnterKey={handlePlayPause}
+                      showError={showStickyError}
+                    />
+                  </div>
 
-            <div className="flex items-start gap-6">
-              <div className="flex flex-col items-center gap-4">
-                <CircularTimer
-                  elapsedSeconds={elapsedSeconds}
-                  totalSeconds={1800}
-                  defaultColor={isDarkMode ? darkColors.clockDefault : colors.clockDefault}
-                  elapsedColor={isDarkMode ? darkColors.clockElapsed : colors.clockElapsed}
-                  outlineColor={isDarkMode ? darkColors.outline : colors.outline}
-                />
-                <TimerControls
-                  isRunning={isRunning}
-                  onPlayPause={handlePlayPause}
-                  onDone={handleDone}
-                />
+                  <div className="flex items-start gap-6">
+                    <div className="flex flex-col items-center gap-4">
+                      <CircularTimer
+                        elapsedSeconds={elapsedSeconds}
+                        totalSeconds={1800}
+                        defaultColor={isDarkMode ? darkColors.clockDefault : colors.clockDefault}
+                        elapsedColor={isDarkMode ? darkColors.clockElapsed : colors.clockElapsed}
+                        outlineColor={isDarkMode ? darkColors.outline : colors.outline}
+                      />
+                      <TimerControls
+                        isRunning={isRunning}
+                        onPlayPause={handlePlayPause}
+                        onDone={handleDone}
+                      />
+                    </div>
+                    <RewardStack rewards={rewardStack} />
+                  </div>
+                </div>
               </div>
-              <RewardStack rewards={rewardStack} />
             </div>
           </div>
 
@@ -566,7 +575,7 @@ export default function Timer() {
             if (selectedTask.goalId) {
               const goal = currentGoal?.id === selectedTask.goalId ? currentGoal : goals.find(g => g.id === selectedTask.goalId);
               if (goal) {
-                goalInfo = { title: goal.title, color: goal.color };
+                goalInfo = { title: goal.title, color: isDarkMode ? darkColors.goalBackground : colors.goalBackground };
               }
             }
             return (

@@ -5,9 +5,10 @@ interface GoalCardProps {
   onClick?: () => void;
   onPromote?: () => void;
   isSelected?: boolean;
+  backgroundColor?: string;
 }
 
-export default function GoalCard({ goal, onClick, onPromote, isSelected = false }: GoalCardProps) {
+export default function GoalCard({ goal, onClick, onPromote, isSelected = false, backgroundColor }: GoalCardProps) {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'Enter' && isSelected && onPromote) {
       e.preventDefault();
@@ -23,7 +24,7 @@ export default function GoalCard({ goal, onClick, onPromote, isSelected = false 
         isSelected ? 'ring-2 ring-blue-400 shadow-lg' : ''
       }`}
       style={{
-        backgroundColor: goal.color,
+        backgroundColor: backgroundColor || goal.color,
         borderColor: '#d97706',
       }}
       data-testid={`card-goal-${goal.id}`}
