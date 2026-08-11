@@ -3,9 +3,19 @@
 @tailwind utilities;
 
 /* ==========================================================================
+   TWO-LAYER TOKEN MODEL
+   --------------------------------------------------------------------------
+   THEME layer (VOX Canvas r2.1, LOCKED — owner-approved design system):
+     color roles, radii, borders, shadows, motion, texture. Source of truth:
+     skillset-saves/runs/2026-08-09-arlabs-design-system/design-system/tokens.css
+     Do not change these values; they define the shipped visual language.
+   APP layer (this codebase's own tokens, not part of the theme spec):
+     --panel/--panel-foreground, --popover*, --card-border, --font-size-*,
+     --leading-*, --tracking-nav, --space-*, --badge-outline, --button-outline,
+     --opaque-button-border-intensity, --elevate-1/2. Free to evolve with the app.
+   --------------------------------------------------------------------------
    VOX Canvas Design System tokens (r2: cream paper / warm ink / violet).
-   HSL custom properties consumed via hsl(var(--x)). Source of truth:
-   skillset-saves/runs/2026-08-09-arlabs-design-system/design-system/tokens.css
+   HSL custom properties consumed via hsl(var(--x)).
    ========================================================================== */
 
 /* LIGHT MODE */
