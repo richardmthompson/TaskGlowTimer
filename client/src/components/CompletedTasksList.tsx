@@ -1,6 +1,7 @@
 import CompletedTask from "./CompletedTask";
 import type { RewardSummary } from "../types/reward";
 import type { Goal } from "../types/goal";
+import { EmptyState } from "./ui/EmptyState";
 
 export interface CompletedTaskData {
   id: string;
@@ -35,10 +36,10 @@ export default function CompletedTasksList({
 
   if (tasks.length === 0) {
     return (
-      <div className="py-6 font-mono text-[10px] uppercase tracking-label text-muted-foreground leading-relaxed">
-        <div className="font-bold">Nothing banked yet</div>
-        <div className="mt-2">finish a task on the clock<br />and it lands here</div>
-      </div>
+      <EmptyState
+        headline="Nothing banked yet"
+        hint={<>finish a task on the clock<br />and it lands here</>}
+      />
     );
   }
 

@@ -1,5 +1,7 @@
 import type { Goal } from "../types/goal";
 import GoalCard from "./GoalCard";
+import { EmptyState } from "./ui/EmptyState";
+import { Kbd } from "./ui/Kbd";
 
 interface GoalsListProps {
   goals: Goal[];
@@ -11,10 +13,10 @@ interface GoalsListProps {
 export default function GoalsList({ goals, onGoalClick, onPromote, selectedGoalId }: GoalsListProps) {
   if (goals.length === 0) {
     return (
-      <div className="py-6 font-mono text-[10px] uppercase tracking-label text-muted-foreground leading-relaxed">
-        <div className="font-bold">Empty stack</div>
-        <div className="mt-2">press <kbd className="px-1.5 py-0.5 rounded-code border-thin border-border bg-card shadow-neo-sm font-bold text-foreground">G</kbd> · add a goal</div>
-      </div>
+      <EmptyState
+        headline="Empty stack"
+        hint={<>press <Kbd className="font-bold">G</Kbd> · add a goal</>}
+      />
     );
   }
 

@@ -1,6 +1,8 @@
 import { useRef } from "react";
 import QueuedTask from "./QueuedTask";
 import { GripVertical } from "lucide-react";
+import { EmptyState } from "./ui/EmptyState";
+import { Kbd } from "./ui/Kbd";
 
 export interface QueuedTaskData {
   id: string;
@@ -49,10 +51,11 @@ export default function QueuedTasksList({
   if (tasks.length === 0) {
     return (
       <div className="flex flex-col gap-2">
-        <div className="py-4 font-mono text-[10px] uppercase tracking-label text-muted-foreground leading-relaxed">
-          <div className="font-bold">Queue is dry</div>
-          <div className="mt-2">press <kbd className="px-1.5 py-0.5 rounded-code border-thin border-border bg-card shadow-neo-sm font-bold text-foreground">Q</kbd> · line up the next task</div>
-        </div>
+        <EmptyState
+          className="py-4"
+          headline="Queue is dry"
+          hint={<>press <Kbd className="font-bold">Q</Kbd> · line up the next task</>}
+        />
       </div>
     );
   }

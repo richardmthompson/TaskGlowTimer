@@ -13,6 +13,8 @@ import GoalTaskConnections from "@/components/GoalTaskConnections";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import RewardStack from "@/components/RewardStack";
 import BrandBadge from "@/components/BrandBadge";
+import { Kbd } from "@/components/ui/Kbd";
+import { toggleTheme } from "@/lib/theme";
 import { usePersistence } from "@/hooks/use-persistence";
 import type { StoredReward } from "@shared/schema";
 import type { Goal } from "../types/goal";
@@ -375,15 +377,7 @@ export default function Timer() {
       
       if (e.key === 'M' && e.shiftKey && !isInputFocused) {
         e.preventDefault();
-        const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        localStorage.setItem('theme', newTheme);
-        
-        if (newTheme === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
+        toggleTheme();
         return;
       }
       
@@ -567,9 +561,9 @@ export default function Timer() {
           <span>VoxPlan · Focus Instrument</span>
           <span className="flex items-center gap-3">
             <span className="hidden sm:inline">
-              <kbd className="px-1.5 py-0.5 rounded-code border-thin border-border bg-card shadow-neo-sm text-foreground">Shift</kbd>
+              <Kbd>Shift</Kbd>
               {' '}
-              <kbd className="px-1.5 py-0.5 rounded-code border-thin border-border bg-card shadow-neo-sm text-foreground">M</kbd>
+              <Kbd>M</Kbd>
               {' '}theme
             </span>
             <ThemeToggle />

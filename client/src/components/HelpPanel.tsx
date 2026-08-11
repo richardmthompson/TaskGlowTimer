@@ -1,4 +1,5 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { Kbd } from "./ui/Kbd";
 
 interface HelpPanelProps {
   isExpanded: boolean;
@@ -60,9 +61,9 @@ export default function HelpPanel({ isExpanded, onToggle }: HelpPanelProps) {
                 <div className="space-y-2">
                   {section.items.map((item, itemIdx) => (
                     <div key={itemIdx} className="flex gap-3">
-                      <kbd className="min-w-[80px] px-2 py-1 text-[10px] font-mono font-bold rounded-code bg-card text-foreground border-thin border-border shadow-neo-sm text-center flex-shrink-0">
+                      <Kbd size="wide" className="font-bold">
                         {item.key}
-                      </kbd>
+                      </Kbd>
                       <span className="text-sm text-foreground leading-6">
                         {item.action}
                       </span>
