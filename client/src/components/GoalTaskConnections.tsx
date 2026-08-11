@@ -5,7 +5,6 @@ import type { CompletedTaskData } from "./CompletedTasksList";
 interface Connection {
   goalId: string;
   taskId: string;
-  goalColor: string;
 }
 
 interface GoalTaskConnectionsProps {
@@ -29,7 +28,6 @@ export default function GoalTaskConnections({ goals, tasks, currentGoal }: GoalT
           newConnections.push({
             goalId: goal.id,
             taskId: task.id,
-            goalColor: goal.color,
           });
         }
       }
@@ -40,8 +38,8 @@ export default function GoalTaskConnections({ goals, tasks, currentGoal }: GoalT
   const getPaths = () => {
     if (!svgRef.current) return [];
 
-    const paths: Array<{ d: string; color: string }> = [];
-    
+    const paths: Array<{ d: string }> = [];
+
     connections.forEach((conn) => {
       // Check if this is the current goal (displayed above sticky) or a goal in the stack
       let goalEl = document.querySelector(`[data-testid="current-goal-${conn.goalId}"]`);
@@ -67,17 +65,14 @@ export default function GoalTaskConnections({ goals, tasks, currentGoal }: GoalT
         const midX = (startX + endX) / 2;
         const path = `M ${startX} ${startY} C ${midX} ${startY}, ${midX} ${endY}, ${endX} ${endY}`;
 
-        paths.push({
-          d: path,
-          color: conn.goalColor,
-        });
+        paths.push({ d: path });
       }
     });
 
     return paths;
   };
 
-  const [paths, setPaths] = useState<Array<{ d: string; color: string }>>([]);
+  const [paths, setPaths] = useState<Array<{ d: string }>>([]);
 
   useEffect(() => {
     const updatePaths = () => {
@@ -112,9 +107,9 @@ export default function GoalTaskConnections({ goals, tasks, currentGoal }: GoalT
           key={index}
           d={path.d}
           fill="none"
-          stroke={path.color}
+          stroke="hsl(var(--primary))"
           strokeWidth="2"
-          strokeOpacity="0.4"
+          strokeOpacity="0.6"
         />
       ))}
     </svg>

@@ -1,5 +1,4 @@
 import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useEffect, useRef } from "react";
 
 interface CompletedTask {
@@ -21,21 +20,13 @@ type Task = CompletedTask | QueuedTask;
 interface TaskDetailsPanelProps {
   task: Task | null;
   onClose: () => void;
-  completedBgColor?: string;
-  queuedBgColor?: string;
-  outlineColor?: string;
   goalTitle?: string;
-  goalColor?: string;
 }
 
 export default function TaskDetailsPanel({
   task,
   onClose,
-  completedBgColor = "#d1fae5",
-  queuedBgColor = "#dbeafe",
-  outlineColor = "#d97706",
   goalTitle,
-  goalColor,
 }: TaskDetailsPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -58,62 +49,49 @@ export default function TaskDetailsPanel({
   if (!task) return null;
 
   const isCompleted = task.type === 'completed';
-  const backgroundColor = isCompleted ? completedBgColor : queuedBgColor;
-  const borderColor = isCompleted ? outlineColor : '#3b82f6';
 
   return (
     <div
       ref={panelRef}
       data-testid="panel-task-details"
-      className="mt-4 p-6 rounded-xl border-2 relative animate-in fade-in slide-in-from-bottom-4 duration-300"
-      style={{
-        backgroundColor,
-        borderColor,
-      }}
+      className="mt-4 p-6 rounded-card bg-card text-card-foreground border-frame border-border shadow-neo-lg relative animate-in fade-in slide-in-from-bottom-4 duration-slow"
     >
-      <Button
+      <button
         data-testid="button-close-details"
-        size="icon"
-        variant="ghost"
         onClick={onClose}
-        className="absolute top-2 right-2 w-8 h-8"
+        aria-label="Close task details"
+        className="absolute top-2 right-2 w-11 h-11 flex items-center justify-center hover-elevate active-elevate-2"
       >
         <X className="w-4 h-4" />
-      </Button>
+      </button>
 
       <div className="grid grid-cols-2 gap-6">
         <div className="space-y-3">
-          <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+          <div className="text-xs font-mono font-bold uppercase tracking-label text-muted-foreground">
             {isCompleted ? 'Completed Task' : 'Queued Task'}
           </div>
 
-          <div className="text-lg font-medium text-gray-800 dark:text-gray-200">
+          <div className="text-lg font-medium text-card-foreground">
             {task.title}
           </div>
         </div>
 
         <div className="space-y-3">
           {isCompleted && (
-            <div className="space-y-2 text-sm font-mono text-gray-700 dark:text-gray-300">
+            <div className="space-y-2 text-sm font-mono text-card-foreground">
               <div>
-                <span className="text-gray-500 dark:text-gray-400">Started:</span> {task.startTime}
+                <span className="text-muted-foreground">Started:</span> {task.startTime}
               </div>
               <div>
-                <span className="text-gray-500 dark:text-gray-400">Ended:</span> {task.endTime}
+                <span className="text-muted-foreground">Ended:</span> {task.endTime}
               </div>
             </div>
           )}
-          
+
           {goalTitle && (
             <div className="mt-2">
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Goal:</div>
-              <div 
-                className="inline-block px-2 py-1 rounded text-sm font-semibold"
-                style={{
-                  backgroundColor: goalColor,
-                  color: '#000',
-                }}
-              >
+              <div className="text-xs text-muted-foreground mb-1">Goal:</div>
+              <div className="inline-block px-2 py-1 rounded-md text-sm font-semibold bg-primary text-primary-foreground border-thin border-border">
                 {goalTitle}
               </div>
             </div>

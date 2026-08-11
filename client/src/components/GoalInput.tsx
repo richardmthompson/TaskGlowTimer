@@ -2,11 +2,9 @@ import { useState, forwardRef } from "react";
 
 interface GoalInputProps {
   onAddGoal: (title: string) => void;
-  backgroundColor?: string;
-  outlineColor?: string;
 }
 
-const GoalInput = forwardRef<HTMLTextAreaElement, GoalInputProps>(({ onAddGoal, backgroundColor = '#fed7aa', outlineColor = '#d97706' }, ref) => {
+const GoalInput = forwardRef<HTMLTextAreaElement, GoalInputProps>(({ onAddGoal }, ref) => {
   const [value, setValue] = useState("");
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -27,18 +25,7 @@ const GoalInput = forwardRef<HTMLTextAreaElement, GoalInputProps>(({ onAddGoal, 
       onChange={(e) => setValue(e.target.value)}
       onKeyDown={handleKeyDown}
       placeholder="Add a goal..."
-      className="w-full h-20 px-3 py-2 rounded-lg border-2 resize-none focus:outline-none focus:ring-2 text-xs font-bold text-gray-800 dark:text-gray-300"
-      style={{
-        backgroundColor: backgroundColor,
-        borderColor: outlineColor,
-        boxShadow: `0 0 0 2px transparent`,
-      }}
-      onFocus={(e) => {
-        e.currentTarget.style.boxShadow = `0 0 0 2px ${outlineColor}40`;
-      }}
-      onBlur={(e) => {
-        e.currentTarget.style.boxShadow = `0 0 0 2px transparent`;
-      }}
+      className="w-full h-20 px-3 py-2 resize-none rounded-md text-xs font-bold bg-primary text-primary-foreground placeholder:text-primary-foreground/60 dark:bg-card dark:text-foreground dark:placeholder:text-muted-foreground dark:border-input border-thin border-border shadow-neo-sm"
       data-testid="input-goal"
     />
   );

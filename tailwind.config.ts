@@ -5,10 +5,44 @@ export default {
   content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      /* Soft-neo radius family: 6px controls, 12px card surfaces, 16px hero
+         (hub) surfaces, 4px inline code/kbd; the circular timer stays a circle
+         via rounded-full at the call site. */
       borderRadius: {
-        lg: ".5625rem", /* 9px */
-        md: ".375rem", /* 6px */
-        sm: ".1875rem", /* 3px */
+        DEFAULT: "var(--radius)",        /* 6px controls */
+        sm: "var(--radius)",             /* 6px */
+        md: "var(--radius)",             /* 6px */
+        lg: "var(--radius-card)",        /* 12px cards/panels/toasts */
+        xl: "var(--radius-hub)",         /* 16px hero surfaces */
+        card: "var(--radius-card)",      /* 12px */
+        hub: "var(--radius-hub)",        /* 16px */
+        code: "var(--radius-code)",      /* 4px, inline code + kbd */
+      },
+      borderWidth: {
+        thin: "var(--border-thin)",     /* 1.5px: chips, kbd, quiet cards */
+        frame: "var(--border-frame)",   /* 3px: cards, inputs, navbar */
+        heavy: "var(--border-heavy)",   /* 4px: hero surfaces, rare emphasis */
+      },
+      boxShadow: {
+        "neo-sm": "var(--shadow-neo-sm)",
+        neo: "var(--shadow-neo)",
+        "neo-lg": "var(--shadow-neo-lg)",
+        "neo-accent": "var(--shadow-neo-accent)", /* violet emphasis: ONE surface per view */
+      },
+      transitionTimingFunction: {
+        neo: "var(--ease)",
+        spring: "var(--ease-spring)",   /* selection lift only */
+      },
+      transitionDuration: {
+        fast: "var(--duration-fast)",
+        DEFAULT: "var(--duration-default)",
+        slow: "var(--duration-slow)",
+        spring: "var(--duration-spring)",
+      },
+      letterSpacing: {
+        label: "var(--tracking-label)",
+        kicker: "var(--tracking-kicker)",
+        nav: "var(--tracking-nav)",
       },
       colors: {
         // Flat / base colors (regular buttons)
@@ -84,7 +118,7 @@ export default {
       },
       fontFamily: {
         sans: ["var(--font-sans)"],
-        serif: ["var(--font-serif)"],
+        display: ["var(--font-display)"],
         mono: ["var(--font-mono)"],
       },
       keyframes: {
@@ -96,19 +130,16 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        "glow-pulse": {
-          "0%, 100%": { 
-            boxShadow: "0 0 20px var(--glow-color, rgba(59, 130, 246, 0.5))",
-          },
-          "50%": { 
-            boxShadow: "0 0 40px var(--glow-color, rgba(59, 130, 246, 0.8)), 0 0 60px var(--glow-color, rgba(59, 130, 246, 0.4))",
-          },
+        "shake-error": {
+          "0%, 100%": { transform: "translateX(0)" },
+          "25%": { transform: "translateX(-10px)" },
+          "75%": { transform: "translateX(10px)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
+        "shake-error": "shake-error 0.5s ease-in-out",
       },
     },
   },

@@ -21,21 +21,25 @@ export default function RewardIcon({ type, count, size = 'md' }: RewardIconProps
         className="relative flex items-center justify-center"
         data-testid="reward-medal"
       >
-        <Award className={`${iconSize} text-yellow-500 dark:text-yellow-400 fill-yellow-500 dark:fill-yellow-400`} />
+        {/* Medal earns the violet primary accent (the one locked accent). */}
+        <Award className={`${iconSize} text-primary fill-primary`} />
       </div>
     );
   }
 
-  // Diamond
+  // Diamond: the demoted mint highlight (deep mint in light, bright mint in dark).
   return (
     <div
       className="relative flex items-center justify-center"
       data-testid="reward-diamond"
     >
-      <Diamond className={`${iconSize} text-purple-500 dark:text-purple-400 fill-purple-500 dark:fill-purple-400`} />
+      <Diamond className={`${iconSize} text-accent fill-accent`} />
       {count !== undefined && count > 0 && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-xs font-bold text-white dark:text-gray-900" style={{ fontSize: size === 'sm' ? '0.5rem' : size === 'md' ? '0.625rem' : '0.75rem' }}>
+          <span
+            className="font-mono font-bold text-accent-foreground"
+            style={{ fontSize: size === 'sm' ? '0.5rem' : size === 'md' ? '0.625rem' : '0.75rem' }}
+          >
             {count}
           </span>
         </div>

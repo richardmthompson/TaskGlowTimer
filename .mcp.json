@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "bunx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--output-dir",
+        ".playwright-mcp",
+        "--isolated"
+      ],
+      "description": "Browser automation and testing using Playwright for visual debugging and web interaction"
+    }
+  }
+}

@@ -1,11 +1,16 @@
 import { Play, Pause, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface TimerControlsProps {
   isRunning: boolean;
   onPlayPause: () => void;
   onDone: () => void;
 }
+
+const neoButton =
+  "w-12 h-12 flex items-center justify-center rounded-md border-thin " +
+  "transition-transform duration-fast ease-neo hover:-translate-x-px hover:-translate-y-px " +
+  "hover:shadow-neo-lg active:translate-x-0.5 active:translate-y-0.5 active:shadow-none " +
+  "";
 
 export default function TimerControls({
   isRunning,
@@ -14,29 +19,27 @@ export default function TimerControls({
 }: TimerControlsProps) {
   return (
     <div className="flex gap-4 justify-center">
-      <Button
+      <button
         data-testid={isRunning ? "button-pause" : "button-play"}
-        size="icon"
-        variant="default"
         onClick={onPlayPause}
-        className="w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 border-blue-700 dark:border-blue-600"
+        aria-label={isRunning ? "Pause timer" : "Start timer"}
+        className={`${neoButton} bg-primary text-primary-foreground`}
       >
         {isRunning ? (
-          <Pause className="w-7 h-7" />
+          <Pause className="w-6 h-6" />
         ) : (
-          <Play className="w-7 h-7" />
+          <Play className="w-6 h-6" />
         )}
-      </Button>
+      </button>
 
-      <Button
+      <button
         data-testid="button-done"
-        size="icon"
-        variant="default"
         onClick={onDone}
-        className="w-14 h-14 rounded-full bg-green-600 hover:bg-green-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 border-green-700 dark:border-emerald-600"
+        aria-label="Complete current task"
+        className={`${neoButton} panel-hairline bg-transparent text-[hsl(var(--panel-foreground))]`}
       >
-        <Check className="w-7 h-7" />
-      </Button>
+        <Check className="w-6 h-6" />
+      </button>
     </div>
   );
 }

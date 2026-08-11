@@ -2,234 +2,221 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   VOX Canvas Design System tokens (r2: cream paper / warm ink / violet).
+   HSL custom properties consumed via hsl(var(--x)). Source of truth:
+   skillset-saves/runs/2026-08-09-arlabs-design-system/design-system/tokens.css
+   ========================================================================== */
+
 /* LIGHT MODE */
 :root {
+  /* Elevate system (retained: shadcn hover/active overlays used app-wide) */
   --button-outline: rgba(0,0,0, .10);
   --badge-outline: rgba(0,0,0, .05);
-
-  /* Automatic computation of border around primary / danger buttons */
-  --opaque-button-border-intensity: -8; /* In terms of percentages */
-
-  /* Backgrounds applied on top of other backgrounds when hovered/active */
+  --opaque-button-border-intensity: -8;
   --elevate-1: rgba(0,0,0, .03);
   --elevate-2: rgba(0,0,0, .08);
 
-  --background: 0 0% 98%;
+  /* --- Color roles (LIGHT): "H S% L%" --- */
+  --background: 43 41% 91%;            /* #F2EDE0 creme paper */
+  --foreground: 27 13% 13%;            /* #26211D warm ink */
 
-  --foreground: 220 10% 15%;
+  --card: 45 60% 96%;                  /* #FBF8EF */
+  --card-foreground: 27 13% 13%;
+  --card-border: 27 13% 13%;
 
-  --border: 220 8% 88%;
+  --popover: 45 60% 96%;
+  --popover-foreground: 27 13% 13%;
+  --popover-border: 27 13% 13%;
 
-  --card: 0 0% 96%;
+  /* One locked accent: VIOLET. Foreground is INK (ink on violet 4.89 PASS). */
+  --primary: 255 100% 73%;             /* #9977FF */
+  --primary-foreground: 27 13% 13%;
+  --primary-deep: 254 61% 56%;         /* #6A4BD4 text accent, 5.03 on creme */
 
-  --card-foreground: 220 10% 15%;
+  --secondary: 27 13% 13%;
+  --secondary-foreground: 43 41% 91%;
 
-  --card-border: 220 8% 90%;
+  /* Secondary highlight only (NOT a second primary): MINT, demoted. Ink text. */
+  --accent: 149 51% 48%;               /* #3BB878 */
+  --accent-foreground: 27 13% 13%;
 
-  --sidebar: 220 4% 94%;
+  --muted: 43 30% 87%;                 /* creme-deep */
+  --muted-foreground: 29 12% 37%;      /* #6B5F54 5.30 on creme */
 
-  --sidebar-foreground: 220 10% 15%;
+  --border: 27 13% 13%;                /* warm ink neo border */
+  --input: 27 13% 13%;
+  --ring: 27 13% 13%;                  /* focus outline, light: INK (violet fails 3.0 UI on creme) */
 
-  --sidebar-border: 220 6% 86%;
+  --destructive: 0 100% 41%;           /* #d00000 */
+  --destructive-foreground: 45 60% 96%;
 
-  --sidebar-primary: 217 91% 60%;
+  /* Paper texture (dot grid on the page, not on cards) */
+  --paper-dot: rgba(38, 33, 29, 0.055);
 
-  --sidebar-primary-foreground: 0 0% 98%;
+  /* Instrument panel: ink surface in both themes (inverse steering-card idiom) */
+  --panel: 27 13% 13%;               /* ink */
+  --panel-foreground: 43 41% 91%;    /* creme */
+  --paper-cell: 26px;
 
-  --sidebar-accent: 220 8% 88%;
+  /* --- Radius (soft-neo family) --- */
+  --radius: 6px;                       /* controls: buttons, inputs, chips */
+  --radius-card: 12px;                 /* cards, sticky note, panels, toasts */
+  --radius-hub: 16px;                  /* hero surfaces (timer housing) */
+  --radius-code: 4px;                  /* inline code, kbd */
 
-  --sidebar-accent-foreground: 220 10% 20%;
+  /* --- Border widths --- */
+  --border-thin: 1.5px;
+  --border-frame: 3px;
+  --border-heavy: 4px;
 
-  --sidebar-ring: 217 91% 60%;
+  /* --- Hard offset shadows (zero blur, translucent ink) --- */
+  --shadow-color: rgba(38, 33, 29, 0.55);
+  --shadow-color-strong: rgba(38, 33, 29, 0.95);
+  --shadow-neo-sm: 2px 2px 0 0 var(--shadow-color);
+  --shadow-neo:    5px 5px 0 0 var(--shadow-color);
+  --shadow-neo-lg: 7px 7px 0 0 var(--shadow-color-strong);
+  --shadow-neo-accent: 6px 6px 0 0 hsl(var(--primary)); /* violet emphasis: at most ONE surface per view */
 
-  --popover: 0 0% 92%;
+  /* --- Typography families --- */
+  --font-sans: "Outfit", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-display: "Archivo", system-ui, sans-serif;
 
-  --popover-foreground: 220 10% 15%;
+  /* --- Type scale (ratio 1.25, base 16px) --- */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.563rem;
+  --font-size-2xl: 1.953rem;
+  --font-size-3xl: 2.441rem;
+  --font-size-4xl: 3.052rem;
 
-  --popover-border: 220 8% 84%;
+  /* --- Line height --- */
+  --leading-none: 0.9;
+  --leading-tight: 1.15;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
 
-  --primary: 217 91% 60%;
+  /* --- Letter spacing --- */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-label: 0.08em;
+  --tracking-kicker: 0.22em;
+  --tracking-nav: 0.125em;
 
-  --primary-foreground: 0 0% 98%;
+  /* --- Spacing (4px base) --- */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
 
-  --secondary: 220 10% 86%;
-
-  --secondary-foreground: 220 10% 15%;
-
-  --muted: 220 12% 90%;
-
-  --muted-foreground: 220 8% 40%;
-
-  --accent: 220 14% 88%;
-
-  --accent-foreground: 220 10% 20%;
-
-  --destructive: 0 84% 60%;
-
-  --destructive-foreground: 0 0% 98%;
-
-  --input: 220 10% 75%;
-  --ring: 217 91% 60%;
-  --chart-1: 217 91% 60%;
-  --chart-2: 271 81% 56%;
-  --chart-3: 142 76% 36%;
-  --chart-4: 32 95% 44%;
-  --chart-5: 197 100% 40%;
-
-  --font-sans: Inter, Open Sans, sans-serif;
-  --font-serif: Georgia, serif;
-  --font-mono: JetBrains Mono, Menlo, monospace;
-  --radius: .5rem; /* 8px */
-  --shadow-2xs: 0px 2px 0px 0px hsl(220 8% 20% / 0.02);
-  --shadow-xs: 0px 2px 0px 0px hsl(220 8% 20% / 0.04);
-  --shadow-sm: 0px 2px 0px 0px hsl(220 8% 20% / 0.05), 0px 1px 2px -1px hsl(220 8% 20% / 0.08);
-  --shadow: 0px 2px 0px 0px hsl(220 8% 20% / 0.06), 0px 1px 2px -1px hsl(220 8% 20% / 0.10);
-  --shadow-md: 0px 2px 0px 0px hsl(220 8% 20% / 0.08), 0px 2px 4px -1px hsl(220 8% 20% / 0.12);
-  --shadow-lg: 0px 2px 0px 0px hsl(220 8% 20% / 0.10), 0px 4px 6px -1px hsl(220 8% 20% / 0.14);
-  --shadow-xl: 0px 2px 0px 0px hsl(220 8% 20% / 0.12), 0px 8px 10px -1px hsl(220 8% 20% / 0.16);
-  --shadow-2xl: 0px 2px 0px 0px hsl(220 8% 20% / 0.18);
-  --tracking-normal: 0em;
-  --spacing: 0.25rem;
-
-  /* Automatically computed borders - intensity can be controlled by the user by the --opaque-button-border-intensity setting */
-
-  /* Fallback for older browsers */
-  --sidebar-primary-border: hsl(var(--sidebar-primary));
-  --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --sidebar-accent-border: hsl(var(--sidebar-accent));
-  --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --primary-border: hsl(var(--primary));
-  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --secondary-border: hsl(var(--secondary));
-  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --muted-border: hsl(var(--muted));
-  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --accent-border: hsl(var(--accent));
-  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --destructive-border: hsl(var(--destructive));
-  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+  /* --- Motion --- */
+  --duration-fast: 120ms;
+  --duration-default: 200ms;
+  --duration-slow: 300ms;
+  --duration-spring: 320ms;            /* selection lift */
+  --ease: cubic-bezier(0, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* selection lift/scale only */
 }
 
+/* DARK MODE (warm derivation of the same ink family) */
 .dark {
   --button-outline: rgba(255,255,255, .10);
   --badge-outline: rgba(255,255,255, .05);
-
-  --opaque-button-border-intensity: 9;  /* In terms of percentages */
-
-  /* Backgrounds applied on top of other backgrounds when hovered/active */
+  --opaque-button-border-intensity: 9;
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  --background: 220 6% 8%;
+  --background: 34 16% 8%;             /* #191612 warm dark */
+  --foreground: 43 41% 91%;            /* creme */
 
-  --foreground: 0 0% 95%;
+  --card: 33 15% 12%;                  /* #221E19 */
+  --card-foreground: 43 41% 91%;
+  --card-border: 33 14% 25%;
 
-  --border: 220 6% 18%;
+  --popover: 33 15% 12%;
+  --popover-foreground: 43 41% 91%;
+  --popover-border: 33 14% 25%;
 
-  --card: 220 5% 10%;
+  /* VIOLET holds in dark. Ink text (4.89 PASS). */
+  --primary: 255 100% 73%;            /* #9977FF */
+  --primary-foreground: 27 13% 13%;
+  --primary-deep: 255 100% 73%;       /* dark text accent = base violet, 5.53 on bg */
 
-  --card-foreground: 0 0% 95%;
+  --secondary: 33 14% 25%;            /* #4A4238 */
+  --secondary-foreground: 43 41% 91%;
 
-  --card-border: 220 5% 15%;
+  /* Secondary highlight: bright MINT in dark. Black text. */
+  --accent: 154 89% 67%;              /* #62F6B5 */
+  --accent-foreground: 0 0% 0%;
 
-  --sidebar: 220 4% 12%;
+  --muted: 33 15% 16%;                /* ink-raised */
+  --muted-foreground: 32 13% 61%;     /* #A89C8E */
 
-  --sidebar-foreground: 0 0% 95%;
+  /* Inverse ink-panel idiom: surfaces stay ink, borders are thin creme
+     hairlines, interiors flat; violet lives in text/accents, not fills. */
+  --border: 36 6% 34%;                /* #5C5851 hairline (creme 28% over ink), decorative, 1.4.11 */
+  --input: 37 5% 48%;                 /* brighter hairline for form edges */
+  --ring: 255 100% 73%;               /* focus outline: VIOLET, 5.08 on card */
 
-  --sidebar-border: 220 4% 20%;
+  --destructive: 0 100% 35%;          /* #b30000 */
+  --destructive-foreground: 43 41% 91%;
 
-  --sidebar-primary: 217 91% 60%;
+  --paper-dot: rgba(242, 237, 224, 0.045);
+  --panel: 33 15% 12%;               /* card-ink, slightly raised from bg */
+  --panel-foreground: 43 41% 91%;
+  --shadow-color: rgba(0, 0, 0, 0.6);
+  --shadow-color-strong: rgba(0, 0, 0, 0.85);
 
-  --sidebar-primary-foreground: 220 6% 8%;
+  /* hairline weights replace heavy frames in dark */
+  --border-thin: 1px;
+  --border-frame: 1.5px;
+  --border-heavy: 2px;
 
-  --sidebar-accent: 220 6% 18%;
+  /* flat interior: no offset shadows inside the panel; the single violet
+     emphasis shadow (--shadow-neo-accent) is the only offset that remains */
+  --shadow-neo-sm: none;
+  --shadow-neo: none;
+  --shadow-neo-lg: none;
+}
 
-  --sidebar-accent-foreground: 0 0% 90%;
+/* Radar ping: reserved for the ONE active/now marker (the running timer dial). */
+@keyframes radar-ping {
+  0% { transform: scale(0.25); opacity: 0.7; }
+  100% { transform: scale(1.15); opacity: 0; }
+}
 
-  --sidebar-ring: 217 91% 60%;
-
-  --popover: 220 5% 14%;
-
-  --popover-foreground: 0 0% 95%;
-
-  --popover-border: 220 5% 22%;
-
-  --primary: 217 91% 60%;
-
-  --primary-foreground: 0 0% 98%;
-
-  --secondary: 220 6% 20%;
-
-  --secondary-foreground: 0 0% 95%;
-
-  --muted: 220 8% 16%;
-
-  --muted-foreground: 220 6% 65%;
-
-  --accent: 220 10% 18%;
-
-  --accent-foreground: 0 0% 90%;
-
-  --destructive: 0 84% 60%;
-
-  --destructive-foreground: 0 0% 98%;
-
-  --input: 220 8% 32%;
-  --ring: 217 91% 60%;
-  --chart-1: 217 91% 70%;
-  --chart-2: 271 81% 66%;
-  --chart-3: 142 76% 50%;
-  --chart-4: 32 95% 58%;
-  --chart-5: 197 100% 55%;
-
-  --shadow-2xs: 0px 2px 0px 0px hsl(220 8% 0% / 0.08);
-  --shadow-xs: 0px 2px 0px 0px hsl(220 8% 0% / 0.12);
-  --shadow-sm: 0px 2px 0px 0px hsl(220 8% 0% / 0.16), 0px 1px 2px -1px hsl(220 8% 0% / 0.20);
-  --shadow: 0px 2px 0px 0px hsl(220 8% 0% / 0.20), 0px 1px 2px -1px hsl(220 8% 0% / 0.24);
-  --shadow-md: 0px 2px 0px 0px hsl(220 8% 0% / 0.24), 0px 2px 4px -1px hsl(220 8% 0% / 0.28);
-  --shadow-lg: 0px 2px 0px 0px hsl(220 8% 0% / 0.28), 0px 4px 6px -1px hsl(220 8% 0% / 0.32);
-  --shadow-xl: 0px 2px 0px 0px hsl(220 8% 0% / 0.32), 0px 8px 10px -1px hsl(220 8% 0% / 0.36);
-  --shadow-2xl: 0px 2px 0px 0px hsl(220 8% 0% / 0.40);
-
-  /* Fallback for older browsers */
-  --sidebar-primary-border: hsl(var(--sidebar-primary));
-  --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --sidebar-accent-border: hsl(var(--sidebar-accent));
-  --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --primary-border: hsl(var(--primary));
-  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --secondary-border: hsl(var(--secondary));
-  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --muted-border: hsl(var(--muted));
-  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --accent-border: hsl(var(--accent));
-  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --destructive-border: hsl(var(--destructive));
-  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+/* Reduced motion: strip transform lifts/presses/pings and collapse durations. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0.01ms;
+    --duration-default: 0.01ms;
+    --duration-slow: 0.01ms;
+    --duration-spring: 0.01ms;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Springy selection lift keeps state styling (shadow) but loses the transform. */
+  .neo-selected {
+    transform: none !important;
+  }
+  /* Radar rings are motion-only decoration: remove entirely. */
+  .radar-ring {
+    display: none !important;
+  }
 }
 
 @layer base {
@@ -237,59 +224,81 @@
     @apply border-border;
   }
 
+  /* Paper: creme + dot-grid texture on the page; cards sit on it untextured. */
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased text-foreground;
+    background-color: hsl(var(--background));
+    background-image: radial-gradient(var(--paper-dot) 1px, transparent 1px);
+    background-size: var(--paper-cell) var(--paper-cell);
+  }
+
+  /* Display headings: Archivo, tight tracking; app labels use mono via utilities. */
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  /* Neo focus indicator: hard offset outline in the theme high-contrast color. */
+  :focus-visible {
+    outline: 3px solid hsl(var(--ring));
+    outline-offset: 2px;
   }
 }
 
 /**
- * Using the elevate system.
- * Automatic contrast adjustment.
- *
- * <element className="hover-elevate" />
- * <element className="active-elevate-2" />
- *
- * // Using the tailwind utility when a data attribute is "on"
- * <element className="toggle-elevate data-[state=on]:toggle-elevated" />
- * // Or manually controlling the toggle state
- * <element className="toggle-elevate toggle-elevated" />
- *
- * Elevation systems have to handle many states.
- * - not-hovered, vs. hovered vs. active  (three mutually exclusive states)
- * - toggled or not
- * - focused or not (this is not handled with these utilities)
- *
- * Even without handling focused or not, this is six possible combinations that
- * need to be distinguished from eachother visually.
+ * Elevate system (retained from shadcn new-york).
+ * Automatic contrast adjustment for hover/active/toggle overlays.
  */
 @layer utilities {
 
-  /* Hide ugly search cancel button in Chrome until we can style it properly */
+  /* Instrument panel: ink surface in BOTH themes (the inverse steering-card
+     idiom). Hairlines derive from the panel foreground, not the page border. */
+  .panel-ink {
+    background: hsl(var(--panel));
+    color: hsl(var(--panel-foreground));
+  }
+  .panel-hairline {
+    border-color: hsl(var(--panel-foreground) / 0.30);
+  }
+  .panel-hairline-soft {
+    border-color: hsl(var(--panel-foreground) / 0.16);
+  }
+  .panel-muted {
+    color: hsl(var(--panel-foreground) / 0.65);
+  }
+
+  /* Selection idiom: springy lift for the selected goal/task card. */
+  .neo-selected {
+    transform: translate(-3px, -3px) scale(1.03);
+    box-shadow: var(--shadow-neo-lg);
+    transition: transform var(--duration-spring) var(--ease-spring),
+                box-shadow var(--duration-spring) var(--ease-spring);
+  }
+
+  /* Radar ping ring: violet, staggered via animation-delay at the call site. */
+  .radar-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    border: var(--border-frame) solid hsl(var(--primary));
+    pointer-events: none;
+    animation: radar-ping 3.2s var(--ease) infinite;
+  }
+
   input[type="search"]::-webkit-search-cancel-button {
     @apply hidden;
   }
 
-  /* Placeholder styling for contentEditable div */
   [contenteditable][data-placeholder]:empty::before {
     content: attr(data-placeholder);
     color: hsl(var(--muted-foreground));
     pointer-events: none;
   }
 
-  /* .no-default-hover-elevate/no-default-active-elevate is an escape hatch so consumers of
-   * buttons/badges can remove the automatic brightness adjustment on interactions
-   * and program their own. */
   .no-default-hover-elevate {}
 
   .no-default-active-elevate {}
 
-
-  /**
-   * Toggleable backgrounds go behind the content. Hoverable/active goes on top.
-   * This way they can stack/compound. Both will overlap the parent's borders!
-   * So borders will be automatically adjusted both on toggle, and hover/active,
-   * and they will be compounded.
-   */
   .toggle-elevate::before,
   .toggle-elevate-2::before {
     content: "";
@@ -304,12 +313,10 @@
     background-color: var(--elevate-2);
   }
 
-  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
   .border.toggle-elevate::before {
     inset: -1px;
   }
 
-  /* Does not work on elements with overflow:hidden! */
   .hover-elevate:not(.no-default-hover-elevate),
   .active-elevate:not(.no-default-active-elevate),
   .hover-elevate-2:not(.no-default-hover-elevate),
@@ -340,7 +347,6 @@
     background-color: var(--elevate-2);
   }
 
-  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after,
   .border.active-elevate:not(.no-active-interaction-elevate)::after,
   .border.hover-elevate-2:not(.no-hover-interaction-elevate)::after,

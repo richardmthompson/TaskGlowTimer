@@ -6,14 +6,14 @@ interface GoalsListProps {
   onGoalClick?: (goal: Goal) => void;
   onPromote?: (goal: Goal) => void;
   selectedGoalId?: string | null;
-  backgroundColor?: string;
 }
 
-export default function GoalsList({ goals, onGoalClick, onPromote, selectedGoalId, backgroundColor }: GoalsListProps) {
+export default function GoalsList({ goals, onGoalClick, onPromote, selectedGoalId }: GoalsListProps) {
   if (goals.length === 0) {
     return (
-      <div className="text-muted-foreground text-sm text-left py-8">
-        No goals yet
+      <div className="py-6 font-mono text-[10px] uppercase tracking-label text-muted-foreground leading-relaxed">
+        <div className="font-bold">Empty stack</div>
+        <div className="mt-2">press <kbd className="px-1.5 py-0.5 rounded-code border-thin border-border bg-card shadow-neo-sm font-bold text-foreground">G</kbd> · add a goal</div>
       </div>
     );
   }
@@ -27,7 +27,6 @@ export default function GoalsList({ goals, onGoalClick, onPromote, selectedGoalI
           onClick={() => onGoalClick?.(goal)}
           onPromote={() => onPromote?.(goal)}
           isSelected={selectedGoalId === goal.id}
-          backgroundColor={backgroundColor}
         />
       ))}
     </div>

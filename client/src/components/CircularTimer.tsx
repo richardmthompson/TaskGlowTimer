@@ -1,17 +1,13 @@
 interface CircularTimerProps {
   elapsedSeconds: number;
   totalSeconds: number;
-  defaultColor?: string;
-  elapsedColor?: string;
-  outlineColor?: string;
+  isRunning?: boolean;
 }
 
 export default function CircularTimer({
   elapsedSeconds,
   totalSeconds = 1800,
-  defaultColor = "#e5e7eb",
-  elapsedColor = "#3b82f6",
-  outlineColor = "#d97706",
+  isRunning = false,
 }: CircularTimerProps) {
   const hours = Math.floor(elapsedSeconds / 3600);
   const minutes = Math.floor((elapsedSeconds % 3600) / 60);
@@ -26,18 +22,28 @@ export default function CircularTimer({
 
   return (
     <div className="relative w-40 h-40 flex items-center justify-center">
+      {/* Radar ping: the app's ONE active/now marker, only while running.
+          Violet rings, staggered thirds; hidden under prefers-reduced-motion. */}
+      {isRunning && (
+        <>
+          <div className="radar-ring" aria-hidden="true" />
+          <div className="radar-ring" style={{ animationDelay: "-1.07s" }} aria-hidden="true" />
+          <div className="radar-ring" style={{ animationDelay: "-2.13s" }} aria-hidden="true" />
+        </>
+      )}
       <svg
         className="transform -rotate-90"
         width="160"
         height="160"
         viewBox="0 0 160 160"
       >
+        {/* Default track: muted. Elapsed arc: violet (the one accent). */}
         <circle
           cx="80"
           cy="80"
           r={radius}
           fill="none"
-          stroke={defaultColor}
+          stroke="hsl(var(--panel-foreground) / 0.15)"
           strokeWidth="7"
         />
         <circle
@@ -45,26 +51,26 @@ export default function CircularTimer({
           cy="80"
           r={radius}
           fill="none"
-          stroke={elapsedColor}
+          stroke="hsl(var(--primary))"
           strokeWidth="7"
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
-          strokeLinecap="round"
-          className="transition-all duration-1000 ease-linear"
+          className="motion-safe:transition-all motion-safe:duration-1000 ease-linear"
         />
+        {/* Heavy neo ring: theme border color, the timer's square exception is that it stays a circle. */}
         <circle
           cx="80"
           cy="80"
-          r={radius + 3.5}
+          r={radius + 3}
           fill="none"
-          stroke={outlineColor}
-          strokeWidth="3.5"
+          stroke="hsl(var(--panel-foreground) / 0.35)"
+          strokeWidth="2.5"
         />
       </svg>
 
       <div
         data-testid="text-timer-display"
-        className="absolute inset-0 flex items-center justify-center text-2xl font-mono font-bold text-gray-800 dark:text-gray-100"
+        className="absolute inset-0 flex items-center justify-center text-2xl font-mono font-bold text-primary"
       >
         {timeString}
       </div>

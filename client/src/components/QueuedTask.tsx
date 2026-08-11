@@ -1,12 +1,9 @@
 import { GripVertical, Play } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface QueuedTaskProps {
   id: string;
   title: string;
   index: number;
-  backgroundColor?: string;
-  outlineColor?: string;
   isSelected?: boolean;
   onDragStart: (index: number) => void;
   onDragEnter: (index: number) => void;
@@ -19,8 +16,6 @@ export default function QueuedTask({
   id,
   title,
   index,
-  backgroundColor = "#dbeafe",
-  outlineColor = "#3b82f6",
   isSelected = false,
   onDragStart,
   onDragEnter,
@@ -28,8 +23,6 @@ export default function QueuedTask({
   onClick,
   onQuickStart,
 }: QueuedTaskProps) {
-  const selectedBgColor = "#bfdbfe";
-
   const handleQuickStartClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onQuickStart?.();
@@ -42,28 +35,30 @@ export default function QueuedTask({
       onDragEnter={() => onDragEnter(index)}
       onDragEnd={onDragEnd}
       onClick={onClick}
-      className="flex items-center gap-2 py-2 px-3 rounded-lg border-2 cursor-move hover-elevate active-elevate-2 transition-all duration-200"
-      style={{
-        backgroundColor: isSelected ? selectedBgColor : backgroundColor,
-        borderColor: outlineColor,
-      }}
+      className={`group flex items-center gap-2 min-h-11 py-2 px-3 rounded-card border-thin cursor-move hover-elevate active-elevate-2 transition-transform duration-fast ease-neo ${
+        isSelected
+          ? "bg-muted border-primary neo-selected"
+          : "bg-muted border-border shadow-neo-sm"
+      }`}
       data-testid={`queued-task-${id}`}
     >
       <GripVertical className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-      <div className="text-sm font-bold flex-1 text-gray-800 dark:text-gray-300">
+      <span className="font-mono text-[10px] font-bold text-[hsl(var(--primary-deep))] flex-shrink-0">
+        {String(index + 1).padStart(2, '0')}
+      </span>
+      <div className="text-sm font-bold flex-1 text-foreground">
         {title}
       </div>
-      {isSelected && (
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={handleQuickStartClick}
-          className="w-7 h-7 flex-shrink-0"
-          data-testid={`button-quick-start-${id}`}
-        >
-          <Play className="w-4 h-4" />
-        </Button>
-      )}
+      <button
+        onClick={handleQuickStartClick}
+        className={`w-11 h-11 items-center justify-center flex-shrink-0 hover-elevate active-elevate-2 ${
+          isSelected ? "flex" : "hidden group-hover:flex"
+        }`}
+        aria-label="Move task to sticky note"
+        data-testid={`button-quick-start-${id}`}
+      >
+        <Play className="w-4 h-4" />
+      </button>
     </div>
   );
 }

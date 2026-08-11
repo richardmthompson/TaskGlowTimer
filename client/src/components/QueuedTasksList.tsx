@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import QueuedTask from "./QueuedTask";
 import { GripVertical } from "lucide-react";
 
@@ -11,8 +11,6 @@ export interface QueuedTaskData {
 interface QueuedTasksListProps {
   tasks: QueuedTaskData[];
   onReorder: (tasks: QueuedTaskData[]) => void;
-  backgroundColor?: string;
-  outlineColor?: string;
   selectedTaskId?: string | null;
   onTaskClick?: (task: { type: 'queued'; title: string; id: string }) => void;
   onQuickStart?: (taskId: string) => void;
@@ -21,8 +19,6 @@ interface QueuedTasksListProps {
 export default function QueuedTasksList({
   tasks,
   onReorder,
-  backgroundColor = "#dbeafe",
-  outlineColor = "#3b82f6",
   selectedTaskId,
   onTaskClick,
   onQuickStart,
@@ -53,17 +49,9 @@ export default function QueuedTasksList({
   if (tasks.length === 0) {
     return (
       <div className="flex flex-col gap-2">
-        <div
-          className="flex items-center gap-2 py-2 px-3 rounded-lg border-2 opacity-40"
-          style={{
-            backgroundColor,
-            borderColor: outlineColor,
-          }}
-        >
-          <GripVertical className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-          <div className="text-sm font-bold flex-1 text-gray-800 dark:text-gray-300 italic">
-            No queued tasks
-          </div>
+        <div className="py-4 font-mono text-[10px] uppercase tracking-label text-muted-foreground leading-relaxed">
+          <div className="font-bold">Queue is dry</div>
+          <div className="mt-2">press <kbd className="px-1.5 py-0.5 rounded-code border-thin border-border bg-card shadow-neo-sm font-bold text-foreground">Q</kbd> · line up the next task</div>
         </div>
       </div>
     );
@@ -77,8 +65,6 @@ export default function QueuedTasksList({
           id={task.id}
           title={task.title}
           index={index}
-          backgroundColor={backgroundColor}
-          outlineColor={outlineColor}
           isSelected={task.id === selectedTaskId}
           onDragStart={handleDragStart}
           onDragEnter={handleDragEnter}

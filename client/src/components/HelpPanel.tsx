@@ -24,9 +24,9 @@ export default function HelpPanel({ isExpanded, onToggle }: HelpPanelProps) {
     {
       category: "Navigation",
       items: [
-        { key: "c", action: "Select first completed task (shows green glow)" },
-        { key: "Q", action: "Select first queued task (shows lighter blue)" },
-        { key: "G", action: "Select first goal in stack (shows orange)" },
+        { key: "c", action: "Select first completed task" },
+        { key: "Q", action: "Select first queued task" },
+        { key: "G", action: "Select first goal in stack" },
         { key: "↑ / ↓ or k / j", action: "Navigate through selected list (completed, queued, or goals)" },
       ],
     },
@@ -48,19 +48,19 @@ export default function HelpPanel({ isExpanded, onToggle }: HelpPanelProps) {
   return (
     <>
       {isExpanded && (
-        <div className="fixed bottom-16 left-0 z-40 w-80 max-h-[calc(90vh-4rem)] border-2 border-b-0 border-border rounded-t-xl bg-card shadow-2xl animate-in slide-in-from-bottom duration-300">
-          <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-8rem)]">
-            <h2 className="text-lg font-semibold mb-4">Keyboard Shortcuts</h2>
-            
+        <div className="fixed bottom-24 right-6 z-40 w-80 max-h-[calc(100vh-8rem)] rounded-card border-frame border-border bg-card text-card-foreground shadow-neo-lg animate-in slide-in-from-bottom duration-slow">
+          <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(100vh-8rem)]">
+            <h2 className="font-display text-lg font-bold tracking-tight mb-4">Keyboard Shortcuts</h2>
+
             {shortcuts.map((section, idx) => (
               <div key={idx} className="space-y-3">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                <h3 className="text-sm font-mono font-bold uppercase tracking-label text-muted-foreground">
                   {section.category}
                 </h3>
                 <div className="space-y-2">
                   {section.items.map((item, itemIdx) => (
                     <div key={itemIdx} className="flex gap-3">
-                      <kbd className="min-w-[80px] px-2 py-1 text-xs font-mono font-semibold bg-muted border border-border rounded text-center flex-shrink-0">
+                      <kbd className="min-w-[80px] px-2 py-1 text-[10px] font-mono font-bold rounded-code bg-card text-foreground border-thin border-border shadow-neo-sm text-center flex-shrink-0">
                         {item.key}
                       </kbd>
                       <span className="text-sm text-foreground leading-6">
@@ -75,13 +75,13 @@ export default function HelpPanel({ isExpanded, onToggle }: HelpPanelProps) {
         </div>
       )}
 
-      <div className="fixed bottom-0 left-0 z-50">
+      <div className="fixed bottom-6 right-6 z-50">
         <button
           data-testid={isExpanded ? "button-collapse-help" : "button-expand-help"}
           onClick={onToggle}
-          className="px-6 py-3 border-2 border-border rounded-t-lg bg-card hover-elevate active-elevate-2 flex items-center gap-2 shadow-lg"
+          className="min-h-11 px-6 py-3 rounded-md border-frame border-border bg-card text-card-foreground hover-elevate active-elevate-2 flex items-center gap-2 shadow-neo"
         >
-          <span className="text-sm font-semibold uppercase tracking-wide">
+          <span className="text-sm font-mono font-bold uppercase tracking-label">
             Help
           </span>
           {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}

@@ -21,7 +21,7 @@ export default function TaskRewards({ rewards }: TaskRewardsProps) {
         <div className="flex items-center">
           <RewardIcon type="medal" size="sm" />
           {rewards.medals > 1 && (
-            <span className="text-xs font-bold ml-0.5 text-gray-700 dark:text-gray-300">
+            <span className="text-xs font-mono font-bold ml-0.5 text-foreground">
               ×{rewards.medals}
             </span>
           )}

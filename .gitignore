@@ -1,6 +1,9 @@
 node_modules
 dist
+data/
 .DS_Store
 server/public
 vite.config.ts.*
 *.tar.gz
+# Playwright MCP isolated output
+.playwright-mcp/

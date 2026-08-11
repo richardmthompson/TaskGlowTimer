@@ -13,65 +13,50 @@ export interface CompletedTaskData {
 
 interface CompletedTasksListProps {
   tasks: CompletedTaskData[];
-  backgroundColor?: string;
-  outlineColor?: string;
   onTaskClick?: (task: CompletedTaskData) => void;
   selectedTaskId?: string | null;
   goals?: Goal[];
   currentGoal?: Goal | null;
-  goalBackgroundColor?: string;
 }
 
 export default function CompletedTasksList({
   tasks,
-  backgroundColor = "#d1fae5",
-  outlineColor = "#d97706",
   onTaskClick,
   selectedTaskId,
   goals = [],
   currentGoal = null,
-  goalBackgroundColor,
 }: CompletedTasksListProps) {
-  const getGoalInfo = (goalId: string | null | undefined) => {
-    if (!goalId) return { abbreviation: undefined, color: undefined };
-    
+  const getGoalAbbreviation = (goalId: string | null | undefined) => {
+    if (!goalId) return undefined;
     const goal = currentGoal?.id === goalId ? currentGoal : goals.find(g => g.id === goalId);
-    if (!goal) return { abbreviation: undefined, color: undefined };
-    
-    return {
-      abbreviation: goal.title.substring(0, 3).toUpperCase(),
-      color: goalBackgroundColor || goal.color,
-    };
+    if (!goal) return undefined;
+    return goal.title.substring(0, 3).toUpperCase();
   };
+
   if (tasks.length === 0) {
     return (
-      <div className="text-muted-foreground text-sm text-left py-8">
-        No completed tasks yet
+      <div className="py-6 font-mono text-[10px] uppercase tracking-label text-muted-foreground leading-relaxed">
+        <div className="font-bold">Nothing banked yet</div>
+        <div className="mt-2">finish a task on the clock<br />and it lands here</div>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-2 max-w-[300px]">
-      {tasks.map((task) => {
-        const goalInfo = getGoalInfo(task.goalId);
-        return (
-          <CompletedTask
-            key={task.id}
-            id={task.id}
-            title={task.title}
-            startTime={task.startTime}
-            endTime={task.endTime}
-            backgroundColor={backgroundColor}
-            outlineColor={outlineColor}
-            onClick={() => onTaskClick?.(task)}
-            isSelected={selectedTaskId === task.id}
-            rewards={task.rewards}
-            goalAbbreviation={goalInfo.abbreviation}
-            goalColor={goalInfo.color}
-          />
-        );
-      })}
+      {tasks.map((task) => (
+        <CompletedTask
+          key={task.id}
+          id={task.id}
+          title={task.title}
+          startTime={task.startTime}
+          endTime={task.endTime}
+          onClick={() => onTaskClick?.(task)}
+          isSelected={selectedTaskId === task.id}
+          rewards={task.rewards}
+          goalAbbreviation={getGoalAbbreviation(task.goalId)}
+        />
+      ))}
     </div>
   );
 }

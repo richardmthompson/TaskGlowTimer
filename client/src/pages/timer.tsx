@@ -3,21 +3,35 @@ import StickyNote from "@/components/StickyNote";
 import CircularTimer from "@/components/CircularTimer";
 import TimerControls from "@/components/TimerControls";
 import CompletedTasksList, { CompletedTaskData } from "@/components/CompletedTasksList";
-import SettingsPanel, { ColorSettings } from "@/components/SettingsPanel";
 import HelpPanel from "@/components/HelpPanel";
-import StatusIndicator from "@/components/StatusIndicator";
 import TaskDetailsPanel from "@/components/TaskDetailsPanel";
 import QueueInput from "@/components/QueueInput";
 import QueuedTasksList, { QueuedTaskData } from "@/components/QueuedTasksList";
 import GoalInput from "@/components/GoalInput";
 import GoalsList from "@/components/GoalsList";
 import GoalTaskConnections from "@/components/GoalTaskConnections";
-import CurrentGoal from "@/components/CurrentGoal";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import RewardStack from "@/components/RewardStack";
 import BrandBadge from "@/components/BrandBadge";
+import { usePersistence } from "@/hooks/use-persistence";
+import type { StoredReward } from "@shared/schema";
 import type { Goal } from "../types/goal";
 import type { Reward, RewardSummary } from "../types/reward";
+
+// All color now comes from arlabs design tokens (CSS vars + Tailwind), not
+// runtime state. Goals still carry a `color` field on the wire (server-persisted
+// GoalBody contract); it is a token sentinel so the persistence layer stays intact
+// while goal surfaces render via token classes, not this value.
+const GOAL_TOKEN_COLOR = "hsl(var(--primary))";
+
+function toStoredRewards(rewards: Reward[]): StoredReward[] {
+  return rewards.map((r) => ({
+    id: r.id,
+    type: r.type,
+    minutes: r.minutes,
+    createdAt: r.createdAt.getTime(),
+  }));
+}
 
 export default function Timer() {
   const [currentTask, setCurrentTask] = useState("");
@@ -35,54 +49,22 @@ export default function Timer() {
     | null
   >(null);
   const [selectedQueuedTaskId, setSelectedQueuedTaskId] = useState<string | null>(null);
-  const [isSettingsExpanded, setIsSettingsExpanded] = useState(false);
   const [isHelpExpanded, setIsHelpExpanded] = useState(false);
   const [showStickyError, setShowStickyError] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [rewardStack, setRewardStack] = useState<Reward[]>([]);
   const [lastRewardAt, setLastRewardAt] = useState<number>(0);
-
-  const [colors, setColors] = useState<ColorSettings>({
-    stickyBackground: "#fffef5", // Very pale cream-yellow
-    // Alternative options to try:
-    // stickyBackground: "#fef3c7", // Original yellow
-    // stickyBackground: "#fed7aa", // Peachy orange
-    // stickyBackground: "#ffedd5", // Pale peach
-    completedBackground: "#d1fae5",
-    goalBackground: "#fed7aa",
-    clockDefault: "#e5e7eb",
-    clockElapsed: "#3b82f6",
-    outline: "#d97706",
-  });
-
-  // Dark mode colors - refined palette
-  const [darkColors] = useState({
-    stickyBackground: "#334155", // Slate-700: clean charcoal instead of dirty green-yellow
-    completedBackground: "#1a3f2f", // Dark emerald: keep as is
-    goalBackground: "#581c87", // Purple-900: rich deep purple instead of brown
-    clockDefault: "#374151",
-    clockElapsed: "#60a5fa",
-    outline: "#1f2937",
-  });
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const stickyNoteRef = useRef<HTMLTextAreaElement>(null);
   const queueInputRef = useRef<HTMLTextAreaElement>(null);
   const goalInputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Track dark mode changes
-  useEffect(() => {
-    const checkDarkMode = () => {
-      setIsDarkMode(document.documentElement.classList.contains('dark'));
-    };
-    
-    checkDarkMode();
-    
-    const observer = new MutationObserver(checkDarkMode);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    
-    return () => observer.disconnect();
-  }, []);
+  const persistence = usePersistence();
+  const hydratedRef = useRef(false);
+  const lastSavedTitleRef = useRef<string | null>(null);
+  // F2: next server sort_order for queue adds. Deletes leave gaps (fine,
+  // relative order is preserved); reorder re-indexes to 0..n-1 so it resets to n.
+  const nextSortOrderRef = useRef(0);
 
   // Medal/Diamond conversion logic
   const consolidateRewards = useCallback((rewards: Reward[]): Reward[] => {
@@ -110,6 +92,99 @@ export default function Timer() {
     
     return newStack;
   }, []);
+
+  // One-shot hydration from the server (write-through persistence layer).
+  useEffect(() => {
+    if (hydratedRef.current || !persistence.ready) return;
+    hydratedRef.current = true;
+
+    const state = persistence.state;
+    if (!state) {
+      // Hydration failed (offline mode): keep empty defaults, full functionality.
+      lastSavedTitleRef.current = "";
+      return;
+    }
+
+    const stackGoals: Goal[] = [];
+    let promotedGoal: Goal | null = null;
+    for (const g of state.goals) {
+      const goal: Goal = { id: g.id, title: g.title, color: g.color };
+      if (g.isCurrent) {
+        promotedGoal = goal;
+      } else {
+        stackGoals.push(goal);
+      }
+    }
+    setGoals(stackGoals);
+    setCurrentGoal(promotedGoal);
+
+    const queuedWire = state.tasks.filter((t) => t.status === "queued");
+    nextSortOrderRef.current = queuedWire.reduce(
+      (max, t) => Math.max(max, t.sortOrder + 1),
+      0,
+    );
+    setQueuedTasks(
+      queuedWire.map((t) => ({ id: t.id, title: t.title, goalId: t.goalId })),
+    );
+    setCompletedTasks(
+      state.tasks
+        .filter((t) => t.status === "completed")
+        .map((t) => {
+          const completedAt = t.completedAt ? new Date(t.completedAt) : new Date();
+          const startedAt = t.startedAt ? new Date(t.startedAt) : completedAt;
+          return {
+            id: t.id,
+            title: t.title,
+            startTime: formatTime(startedAt),
+            endTime: formatTime(completedAt),
+            goalId: t.goalId,
+            rewards:
+              t.rewardMinutes > 0
+                ? {
+                    medals: t.medals,
+                    diamonds: t.diamonds,
+                    totalMinutes: t.rewardMinutes,
+                  }
+                : undefined,
+          };
+        }),
+    );
+
+    const s = state.session;
+    setCurrentTask(s.currentTaskTitle);
+    lastSavedTitleRef.current = s.currentTaskTitle;
+    setTaskStartTime(s.taskStartedAt ? new Date(s.taskStartedAt) : null);
+
+    let elapsed = s.elapsedSeconds;
+    if (s.isRunning && s.runningSince) {
+      elapsed += Math.max(
+        0,
+        Math.floor((Date.now() - new Date(s.runningSince).getTime()) / 1000),
+      );
+    }
+    let lastReward = s.lastRewardAt;
+    let stack: Reward[] = s.rewardStack.map((r) => ({
+      id: r.id,
+      type: r.type,
+      minutes: r.minutes,
+      createdAt: new Date(r.createdAt),
+    }));
+    // Award medals owed for 30-min boundaries crossed while the page was unloaded.
+    while (lastReward + 1800 <= elapsed) {
+      lastReward += 1800;
+      const medal: Reward = {
+        id: `${Date.now()}-${lastReward}`,
+        type: 'medal',
+        minutes: 30,
+        createdAt: new Date(),
+      };
+      stack = consolidateRewards([medal, ...stack]);
+    }
+    setElapsedSeconds(elapsed);
+    setLastRewardAt(lastReward);
+    setRewardStack(stack);
+    setIsRunning(s.isRunning);
+  }, [persistence.ready, persistence.state, consolidateRewards]);
 
   useEffect(() => {
     if (isRunning) {
@@ -152,11 +227,30 @@ export default function Timer() {
   }, [isRunning, lastRewardAt, consolidateRewards]);
 
   const handlePlayPause = useCallback(() => {
+    const now = new Date();
     if (!isRunning && !taskStartTime) {
-      setTaskStartTime(new Date());
+      setTaskStartTime(now);
+    }
+    if (!isRunning) {
+      persistence.patchSession({
+        isRunning: true,
+        runningSince: now.getTime(),
+        taskStartedAt: (taskStartTime ?? now).getTime(),
+        elapsedSeconds,
+        lastRewardAt,
+        rewardStack: toStoredRewards(rewardStack),
+      });
+    } else {
+      persistence.patchSession({
+        isRunning: false,
+        runningSince: null,
+        elapsedSeconds,
+        lastRewardAt,
+        rewardStack: toStoredRewards(rewardStack),
+      });
     }
     setIsRunning(!isRunning);
-  }, [isRunning, taskStartTime]);
+  }, [isRunning, taskStartTime, elapsedSeconds, lastRewardAt, rewardStack, persistence.patchSession]);
 
   const formatTime = (date: Date) => {
     const hours = date.getHours();
@@ -185,6 +279,28 @@ export default function Timer() {
         rewards: rewardSummary.totalMinutes > 0 ? rewardSummary : undefined,
       };
 
+      persistence.createTask({
+        id: newTask.id,
+        title: newTask.title,
+        status: "completed",
+        goalId: newTask.goalId,
+        startedAt: startTime.getTime(),
+        completedAt: endTime.getTime(),
+        medals: rewardSummary.medals,
+        diamonds: rewardSummary.diamonds,
+        rewardMinutes: rewardSummary.totalMinutes,
+      });
+      persistence.patchSession({
+        currentTaskTitle: "",
+        isRunning: false,
+        elapsedSeconds: 0,
+        runningSince: null,
+        taskStartedAt: null,
+        lastRewardAt: 0,
+        rewardStack: [],
+      });
+      lastSavedTitleRef.current = "";
+
       setCompletedTasks((prev) => [...prev, newTask]);
       setCurrentTask("");
       setElapsedSeconds(0);
@@ -193,7 +309,7 @@ export default function Timer() {
       setRewardStack([]);
       setLastRewardAt(0);
     }
-  }, [currentTask, taskStartTime, currentGoal, rewardStack]);
+  }, [currentTask, taskStartTime, currentGoal, rewardStack, persistence.createTask, persistence.patchSession]);
 
   const handleAddToQueue = (taskTitle: string) => {
     const newTask: QueuedTaskData = {
@@ -201,6 +317,14 @@ export default function Timer() {
       title: taskTitle,
       goalId: currentGoal?.id || null,
     };
+    persistence.createTask({
+      id: newTask.id,
+      title: newTask.title,
+      status: "queued",
+      sortOrder: nextSortOrderRef.current,
+      goalId: newTask.goalId,
+    });
+    nextSortOrderRef.current += 1;
     setQueuedTasks([...queuedTasks, newTask]);
   };
 
@@ -208,8 +332,9 @@ export default function Timer() {
     const newGoal: Goal = {
       id: Date.now().toString(),
       title: title,
-      color: isDarkMode ? darkColors.goalBackground : colors.goalBackground,
+      color: GOAL_TOKEN_COLOR,
     };
+    persistence.createGoal(newGoal);
     setGoals([...goals, newGoal]);
   };
 
@@ -222,6 +347,9 @@ export default function Timer() {
         setTimeout(() => setShowStickyError(false), 500);
         return;
       }
+      persistence.deleteTask(taskId);
+      persistence.patchSession({ currentTaskTitle: task.title });
+      lastSavedTitleRef.current = task.title;
       setCurrentTask(task.title);
       setQueuedTasks(queuedTasks.filter(t => t.id !== taskId));
       setSelectedQueuedTaskId(null);
@@ -293,15 +421,20 @@ export default function Timer() {
       else if (e.key === 'd' && !isInputFocused && selectedTask) {
         e.preventDefault();
         if (selectedTask.type === 'completed') {
+          const deletedTask = completedTasks.find(t => t.title === selectedTask.title && t.startTime === selectedTask.startTime);
+          if (deletedTask) {
+            persistence.deleteTask(deletedTask.id);
+          }
           setCompletedTasks(prev => prev.filter(t => !(t.title === selectedTask.title && t.startTime === selectedTask.startTime)));
           setSelectedTask(null);
         } else if (selectedTask.type === 'queued' && selectedQueuedTaskId) {
+          persistence.deleteTask(selectedQueuedTaskId);
           setQueuedTasks(prev => prev.filter(t => t.id !== selectedQueuedTaskId));
           setSelectedQueuedTaskId(null);
           setSelectedTask(null);
         }
       }
-      
+
       else if (e.key === 'T' && !isInputFocused && selectedTask?.type === 'completed') {
         e.preventDefault();
         if (currentTask.trim()) {
@@ -309,6 +442,12 @@ export default function Timer() {
           setTimeout(() => setShowStickyError(false), 500);
           return;
         }
+        const restoredTask = completedTasks.find(t => t.title === selectedTask.title && t.startTime === selectedTask.startTime);
+        if (restoredTask) {
+          persistence.deleteTask(restoredTask.id);
+        }
+        persistence.patchSession({ currentTaskTitle: selectedTask.title });
+        lastSavedTitleRef.current = selectedTask.title;
         setCurrentTask(selectedTask.title);
         setCompletedTasks(prev => prev.filter(t => !(t.title === selectedTask.title && t.startTime === selectedTask.startTime)));
         setSelectedTask(null);
@@ -351,6 +490,7 @@ export default function Timer() {
         e.preventDefault();
         const goal = goals.find(g => g.id === selectedGoalInStack);
         if (goal) {
+          persistence.setCurrentGoal(goal.id);
           setCurrentGoal(goal);
           setGoals(goals.filter(g => g.id !== selectedGoalInStack));
           setSelectedGoalInStack(null);
@@ -408,158 +548,185 @@ export default function Timer() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isRunning, completedTasks, queuedTasks, goals, currentGoal, selectedTask, selectedQueuedTaskId, selectedGoalInStack, handleDone, handlePlayPause]);
+  }, [isRunning, completedTasks, queuedTasks, goals, currentGoal, selectedTask, selectedQueuedTaskId, selectedGoalInStack, handleDone, handlePlayPause, persistence.deleteTask, persistence.patchSession, persistence.setCurrentGoal]);
+
+  // Debounced sticky-note title persistence (suppressed until hydrated).
+  useEffect(() => {
+    if (!hydratedRef.current) return;
+    if (lastSavedTitleRef.current === currentTask) return;
+    lastSavedTitleRef.current = currentTask;
+    persistence.saveTitle(currentTask);
+  }, [currentTask, persistence.saveTitle]);
 
   return (
-    <div className="flex justify-center items-center h-screen bg-background px-8">
-      <div className="relative">
-        <div className="absolute -top-16 left-0 z-20">
-          <BrandBadge />
-        </div>
-        <div className="flex max-w-[1200px] w-full h-[90vh] border-4 rounded-lg relative bg-[#faf8f5] dark:bg-[#1a1a1a] border-[#e8e4dc] dark:border-[#2a2a2a]">
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
-          <ThemeToggle />
-        </div>
-        <GoalTaskConnections goals={goals} tasks={completedTasks} currentGoal={currentGoal} />
-        
-        <div className="w-[28%] flex flex-col relative" style={{ zIndex: 1 }}>
-        <div className="h-1/2 p-4 pb-2 flex flex-col items-end border-b-2 border-[#e8e4dc] dark:border-[#2a2a2a]">
-          <h2 className="text-sm font-semibold mb-4 uppercase tracking-wide text-muted-foreground text-right w-full">
-            Completed Today
-          </h2>
-          <div className="flex-1 w-full relative">
-            <div className="absolute inset-0 overflow-y-auto pr-2">
-              <CompletedTasksList
-                tasks={completedTasks}
-                backgroundColor={isDarkMode ? darkColors.completedBackground : colors.completedBackground}
-                outlineColor={isDarkMode ? darkColors.outline : colors.outline}
-                goals={goals}
-                currentGoal={currentGoal}
-                goalBackgroundColor={isDarkMode ? darkColors.goalBackground : colors.goalBackground}
-                onTaskClick={(task) => {
-                  setSelectedTask({ ...task, type: 'completed' });
-                  setSelectedQueuedTaskId(null);
-                  // Bidirectional selection: select the task's goal too
-                  if (task.goalId) {
-                    if (currentGoal?.id === task.goalId) {
-                      // Goal is current goal, don't select in stack
-                      setSelectedGoalInStack(null);
-                    } else {
-                      const goalInStack = goals.find(g => g.id === task.goalId);
-                      if (goalInStack) {
-                        setSelectedGoalInStack(goalInStack.id);
+    <div className="flex justify-center items-center min-h-screen px-8 py-6">
+      <div className="flex flex-col w-full max-w-[1200px] h-[calc(100vh-3rem)] min-h-[560px] rounded-card overflow-hidden border-frame border-border bg-card">
+        {/* Meta strip: tiny mono furniture, reference-header style. The wordmark
+            lives in the canvas masthead, not here. */}
+        <header className="flex items-center justify-between gap-4 shrink-0 border-b-thin border-border px-5 py-2 font-mono text-[10px] uppercase tracking-label text-muted-foreground">
+          <span>VoxPlan · Focus Instrument</span>
+          <span className="flex items-center gap-3">
+            <span className="hidden sm:inline">
+              <kbd className="px-1.5 py-0.5 rounded-code border-thin border-border bg-card shadow-neo-sm text-foreground">Shift</kbd>
+              {' '}
+              <kbd className="px-1.5 py-0.5 rounded-code border-thin border-border bg-card shadow-neo-sm text-foreground">M</kbd>
+              {' '}theme
+            </span>
+            <ThemeToggle />
+          </span>
+        </header>
+
+        <div className="relative flex flex-1 min-h-0">
+          <GoalTaskConnections goals={goals} tasks={completedTasks} currentGoal={currentGoal} />
+
+          <div className="w-[28%] min-w-[220px] flex flex-col min-h-0 border-r-thin border-border relative" style={{ zIndex: 1 }}>
+            <div className="flex-1 min-h-0 p-4 pb-2 flex flex-col border-b-thin border-border">
+              <h2 className="text-sm font-mono font-bold mb-3 uppercase tracking-label text-muted-foreground">
+                Completed Today
+              </h2>
+              <div className="flex-1 min-h-0 overflow-y-auto pr-2">
+                <CompletedTasksList
+                  tasks={completedTasks}
+                  goals={goals}
+                  currentGoal={currentGoal}
+                  onTaskClick={(task) => {
+                    setSelectedTask({ ...task, type: 'completed' });
+                    setSelectedQueuedTaskId(null);
+                    // Bidirectional selection: select the task's goal too
+                    if (task.goalId) {
+                      if (currentGoal?.id === task.goalId) {
+                        // Goal is current goal, don't select in stack
+                        setSelectedGoalInStack(null);
+                      } else {
+                        const goalInStack = goals.find(g => g.id === task.goalId);
+                        if (goalInStack) {
+                          setSelectedGoalInStack(goalInStack.id);
+                        }
                       }
                     }
-                  }
-                }}
-                selectedTaskId={selectedTask?.type === 'completed' ? completedTasks.find(t => t.title === selectedTask.title && t.startTime === selectedTask.startTime)?.id : null}
-              />
+                  }}
+                  selectedTaskId={selectedTask?.type === 'completed' ? completedTasks.find(t => t.title === selectedTask.title && t.startTime === selectedTask.startTime)?.id : null}
+                />
+              </div>
+            </div>
+
+            <div className="flex-1 min-h-0 p-4 pt-2 flex flex-col">
+              <h2 className="text-sm font-mono font-bold mb-3 uppercase tracking-label text-muted-foreground">
+                Goals
+              </h2>
+              <div className="mb-3">
+                <GoalInput
+                  ref={goalInputRef}
+                  onAddGoal={handleAddGoal}
+                />
+              </div>
+              <div className="flex-1 min-h-0 overflow-y-auto">
+                <GoalsList
+                  goals={goals}
+                  onGoalClick={(goal) => {
+                    const newSelectedId = goal.id === selectedGoalInStack ? null : goal.id;
+                    setSelectedGoalInStack(newSelectedId);
+                    if (newSelectedId) {
+                      setSelectedTask(null);
+                      setSelectedQueuedTaskId(null);
+                    }
+                  }}
+                  onPromote={(goal) => {
+                    persistence.setCurrentGoal(goal.id);
+                    setCurrentGoal(goal);
+                    setGoals(goals.filter(g => g.id !== goal.id));
+                    setSelectedGoalInStack(null);
+                  }}
+                  selectedGoalId={selectedGoalInStack}
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="h-1/2 p-4 pt-2 flex flex-col">
-          <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground">
-            Goals
-          </h2>
-          <div className="mb-3">
-            <GoalInput
-              ref={goalInputRef}
-              onAddGoal={handleAddGoal}
-              backgroundColor={isDarkMode ? darkColors.goalBackground : colors.goalBackground}
-              outlineColor={isDarkMode ? darkColors.outline : colors.outline}
-            />
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            <GoalsList
-              goals={goals}
-              onGoalClick={(goal) => {
-                const newSelectedId = goal.id === selectedGoalInStack ? null : goal.id;
-                setSelectedGoalInStack(newSelectedId);
-                if (newSelectedId) {
-                  setSelectedTask(null);
-                  setSelectedQueuedTaskId(null);
-                }
-              }}
-              onPromote={(goal) => {
-                setCurrentGoal(goal);
-                setGoals(goals.filter(g => g.id !== goal.id));
-                setSelectedGoalInStack(null);
-              }}
-              selectedGoalId={selectedGoalInStack}
-              backgroundColor={isDarkMode ? darkColors.goalBackground : colors.goalBackground}
-            />
-          </div>
-        </div>
-      </div>
+          <div className="flex-1 min-w-0 flex flex-col overflow-y-auto px-8 pt-6 pb-4 relative" style={{ zIndex: 1 }}>
+            <div className="w-full max-w-[620px] mx-auto flex flex-col flex-1">
+              <BrandBadge />
 
-      <div className="flex-1 flex flex-col p-8">
-        <div className="h-[35%] pb-4 flex flex-col items-end">
-          <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-muted-foreground text-right w-full">
-            Task Queue
-          </h2>
-          <div className="flex gap-4 h-[calc(100%-2rem)] max-w-[500px] ml-auto">
-            <div className="w-[200px] flex-shrink-0">
-              <QueueInput
-                ref={queueInputRef}
-                onAddTask={handleAddToQueue}
-                backgroundColor={isDarkMode ? "#1a3f4f" : "#dbeafe"}
-                outlineColor={isDarkMode ? "#2a4f5f" : "#3b82f6"}
-              />
-            </div>
-            <div className="flex-1 max-w-[300px] overflow-y-auto pr-2">
-              <QueuedTasksList
-                tasks={queuedTasks}
-                onReorder={setQueuedTasks}
-                backgroundColor={isDarkMode ? "#1a3f4f" : "#dbeafe"}
-                outlineColor={isDarkMode ? "#2a4f5f" : "#3b82f6"}
-                selectedTaskId={selectedQueuedTaskId}
-                onTaskClick={handleQueuedTaskClick}
-                onQuickStart={handleQuickStart}
-              />
-            </div>
-          </div>
-        </div>
+              {/* Instrument panel: ink surface in both themes, the single violet
+                  emphasis shadow, head strip + truth strip + body + cascade. */}
+              <div className="panel-ink rounded-hub border-thin border-border shadow-neo-accent overflow-hidden mt-6">
+                {/* Head strip */}
+                <div className="flex items-baseline justify-between gap-4 px-4 py-3 border-b panel-hairline-soft">
+                  <span className="font-mono text-[9px] font-bold uppercase tracking-kicker panel-muted">
+                    The Instrument Panel
+                  </span>
+                  <span className="font-mono text-[9px] font-bold uppercase tracking-kicker text-primary">
+                    {isRunning ? 'Running' : currentTask ? 'Paused' : 'Idle'}
+                  </span>
+                </div>
 
-        <div className="h-[65%] pt-4 flex flex-col">
-          <div className="flex items-start gap-8">
-            <div className="flex flex-col gap-1 flex-1 max-w-[400px]">
-              <CurrentGoal
-                goal={currentGoal}
-                onClear={() => {
-                  if (currentGoal) {
-                    setGoals([...goals, currentGoal]);
-                    setCurrentGoal(null);
-                  }
-                }}
-                backgroundColor={isDarkMode ? darkColors.goalBackground : colors.goalBackground}
-              />
-              
-              {/* Subtle grouping container for sticky + clock */}
-              <div className="rounded-lg border p-4 bg-[#faf8f5]/30 dark:bg-[#1a1a1a]/30 border-[#e8e4dc]/50 dark:border-[#2a2a2a]/50">
-                <div className="flex items-start gap-8">
-                  <div className="flex flex-col gap-1 flex-1">
-                    <StatusIndicator isRunning={isRunning} currentTask={currentTask} />
+                {/* Truth strip */}
+                <div className="grid grid-cols-3 border-b panel-hairline-soft">
+                  <div className="px-4 py-3 border-r panel-hairline-soft">
+                    <span className="block font-display font-black text-xl text-primary leading-tight" data-testid="stat-completed">
+                      {completedTasks.length}
+                    </span>
+                    <span className="block mt-0.5 font-mono text-[8px] uppercase tracking-label panel-muted">
+                      Completed today
+                    </span>
+                  </div>
+                  <div className="px-4 py-3 border-r panel-hairline-soft">
+                    <span className="block font-display font-black text-xl text-primary leading-tight" data-testid="stat-queued">
+                      {queuedTasks.length}
+                    </span>
+                    <span className="block mt-0.5 font-mono text-[8px] uppercase tracking-label panel-muted">
+                      In queue
+                    </span>
+                  </div>
+                  <div className="px-4 py-3 min-w-0">
+                    {currentGoal ? (
+                      <span className="flex items-baseline gap-2 min-w-0">
+                        <span className="block font-display font-black text-xl text-primary leading-tight truncate min-w-0" title={currentGoal.title} data-testid={`current-goal-${currentGoal.id}`}>
+                          {currentGoal.title}
+                        </span>
+                        <button
+                          onClick={() => {
+                            persistence.setCurrentGoal(null);
+                            setGoals([...goals, currentGoal]);
+                            setCurrentGoal(null);
+                          }}
+                          aria-label="Clear current goal"
+                          data-testid="button-clear-goal"
+                          className="font-mono text-[10px] panel-muted hover:text-primary flex-shrink-0 min-h-6 min-w-6"
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    ) : (
+                      <span className="block font-display font-black text-xl uppercase leading-tight panel-muted">
+                        None
+                      </span>
+                    )}
+                    <span className="block mt-0.5 font-mono text-[8px] uppercase tracking-label panel-muted">
+                      Current goal
+                    </span>
+                  </div>
+                </div>
+
+                {/* Body: sticky + dial */}
+                <div className="flex flex-wrap items-center gap-6 px-4 py-5">
+                  <div className="flex flex-col flex-1 min-w-[200px]">
                     <StickyNote
                       ref={stickyNoteRef}
                       value={currentTask}
                       onChange={setCurrentTask}
                       isActive={isRunning}
-                      backgroundColor={isDarkMode ? darkColors.stickyBackground : colors.stickyBackground}
-                      outlineColor={isDarkMode ? darkColors.outline : colors.outline}
                       onEnterKey={handlePlayPause}
                       showError={showStickyError}
                     />
                   </div>
 
-                  <div className="flex items-start gap-6">
+                  <div className="flex items-center gap-5">
                     <div className="flex flex-col items-center gap-4">
                       <CircularTimer
                         elapsedSeconds={elapsedSeconds}
                         totalSeconds={1800}
-                        defaultColor={isDarkMode ? darkColors.clockDefault : colors.clockDefault}
-                        elapsedColor={isDarkMode ? darkColors.clockElapsed : colors.clockElapsed}
-                        outlineColor={isDarkMode ? darkColors.outline : colors.outline}
+                        isRunning={isRunning}
                       />
                       <TimerControls
                         isRunning={isRunning}
@@ -570,45 +737,72 @@ export default function Timer() {
                     <RewardStack rewards={rewardStack} />
                   </div>
                 </div>
+
+                {/* Cascade line */}
+                <div className="px-4 pb-3 font-mono text-[9px] font-bold tracking-label panel-muted">
+                  THE LINE: <span className="text-primary">goal → queue → sticky → clock → banked</span>
+                </div>
+              </div>
+
+              {selectedTask && (() => {
+                let goalTitle: string | undefined;
+                if (selectedTask.goalId) {
+                  const goal = currentGoal?.id === selectedTask.goalId ? currentGoal : goals.find(g => g.id === selectedTask.goalId);
+                  if (goal) {
+                    goalTitle = goal.title;
+                  }
+                }
+                return (
+                  <TaskDetailsPanel
+                    task={selectedTask}
+                    onClose={() => setSelectedTask(null)}
+                    goalTitle={goalTitle}
+                  />
+                );
+              })()}
+
+              {/* Corner furniture: title-block stamp, engineer's-drawing style. */}
+              <div className="mt-auto pt-5 flex justify-end">
+                <div className="grid grid-cols-[auto_auto] gap-x-4 gap-y-0.5 rounded-code border-thin border-border bg-card px-3 py-2 font-mono text-[9px] tracking-label">
+                  <span className="text-muted-foreground uppercase">Unit</span>
+                  <span className="font-bold uppercase">Web-Mini</span>
+                  <span className="text-muted-foreground uppercase">Mode</span>
+                  <span className="font-bold uppercase">{isRunning ? 'Focus' : 'Standby'}</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {selectedTask && (() => {
-            let goalInfo: { title?: string; color?: string } = { title: undefined, color: undefined };
-            if (selectedTask.goalId) {
-              const goal = currentGoal?.id === selectedTask.goalId ? currentGoal : goals.find(g => g.id === selectedTask.goalId);
-              if (goal) {
-                goalInfo = { title: goal.title, color: isDarkMode ? darkColors.goalBackground : colors.goalBackground };
-              }
-            }
-            return (
-              <TaskDetailsPanel
-                task={selectedTask}
-                onClose={() => setSelectedTask(null)}
-                completedBgColor={isDarkMode ? darkColors.completedBackground : colors.completedBackground}
-                queuedBgColor={isDarkMode ? "#1a3f4f" : "#dbeafe"}
-                outlineColor={isDarkMode ? darkColors.outline : colors.outline}
-                goalTitle={goalInfo.title}
-                goalColor={goalInfo.color}
+          <div className="w-[300px] min-w-[240px] flex flex-col min-h-0 border-l-thin border-border p-4 relative" style={{ zIndex: 1 }}>
+            <h2 className="text-sm font-mono font-bold mb-3 uppercase tracking-label text-muted-foreground">
+              Task Queue
+            </h2>
+            <div className="mb-3">
+              <QueueInput
+                ref={queueInputRef}
+                onAddTask={handleAddToQueue}
               />
-            );
-          })()}
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto pr-2">
+              <QueuedTasksList
+                tasks={queuedTasks}
+                onReorder={(tasks) => {
+                  persistence.reorderQueue(tasks.map(t => t.id));
+                  nextSortOrderRef.current = tasks.length;
+                  setQueuedTasks(tasks);
+                }}
+                selectedTaskId={selectedQueuedTaskId}
+                onTaskClick={handleQueuedTaskClick}
+                onQuickStart={handleQuickStart}
+              />
+            </div>
+          </div>
         </div>
       </div>
-      </div>
-    </div>
 
-    <HelpPanel
+      <HelpPanel
         isExpanded={isHelpExpanded}
         onToggle={() => setIsHelpExpanded(!isHelpExpanded)}
-      />
-
-      <SettingsPanel
-        colors={colors}
-        onChange={setColors}
-        isExpanded={isSettingsExpanded}
-        onToggle={() => setIsSettingsExpanded(!isSettingsExpanded)}
       />
     </div>
   );

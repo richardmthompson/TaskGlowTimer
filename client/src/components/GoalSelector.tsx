@@ -21,14 +21,9 @@ export default function GoalSelector({ goals, selectedGoalId, onSelectGoal }: Go
         <button
           key={goal.id}
           onClick={() => onSelectGoal(goal.id === selectedGoalId ? null : goal.id)}
-          className={`px-3 py-1 text-xs font-semibold rounded-md border-2 hover-elevate active-elevate-2 transition-all ${
-            goal.id === selectedGoalId ? 'ring-2 ring-blue-400' : ''
+          className={`px-3 py-1 text-xs font-semibold rounded-md border-thin border-border bg-primary text-primary-foreground shadow-neo-sm hover-elevate active-elevate-2 transition-all ${
+            goal.id === selectedGoalId ? 'ring-2 ring-ring' : ''
           }`}
-          style={{
-            backgroundColor: goal.color,
-            borderColor: '#d97706',
-            color: '#1f2937',
-          }}
           data-testid={`button-select-goal-${goal.id}`}
         >
           {goal.title}
@@ -37,8 +32,7 @@ export default function GoalSelector({ goals, selectedGoalId, onSelectGoal }: Go
       {selectedGoalId && (
         <button
           onClick={() => onSelectGoal(null)}
-          className="px-3 py-1 text-xs font-semibold rounded-md border-2 hover-elevate active-elevate-2 bg-gray-200"
-          style={{ borderColor: '#d97706', color: '#1f2937' }}
+          className="px-3 py-1 text-xs font-semibold rounded-md border-thin border-border bg-muted text-foreground shadow-neo-sm hover-elevate active-elevate-2"
           data-testid="button-clear-goal"
         >
           ✕ Clear
